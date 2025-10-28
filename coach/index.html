@@ -1,1 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0c204a">
+  <link rel="manifest" href="manifest.webmanifest">
+  <title>Operation Sky Core — Coach (v1.0)</title>
+  <style>
+    :root{--bg:#0c204a;--panel:#122e63;--text:#e7eef9;--muted:#a0b8d6;--border:#274184;--accent:#2d6edc;--ok:#17b26a;--warn:#f59e0b;--danger:#ef4444}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#0f2554,#0c204a)}
+    h1{font-size:18px;margin:0}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    input,button,select,textarea{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 12px;font-size:14px}
+    button{cursor:pointer}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:12px;margin:12px 0}
+    .small{font-size:12px;color:var(--muted)}
+    .badge{border:1px solid var(--border);border-radius:999px;padding:4px 8px;font-size:12px;color:var(--muted);margin-right:6px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
+    th{color:var(--muted);font-weight:600}
+    .ok{color:var(--ok)} .warn{color:var(--warn)} .danger{color:var(--danger)}
+    .ghost{opacity:.7}
+    .progress{height:10px;background:#0b1a3a;border-radius:999px;border:1px solid var(--border);overflow:hidden}
+    .progress>div{height:100%;background:var(--accent);width:0%}
+    .pill{padding:4px 10px;border-radius:999px;border:1px solid var(--border);}
+    /* login gate */
+    #gate{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;padding:16px;z-index:99999}
+    #gate .box{width:100%;max-width:420px;background:#0e1f4a;border:1px solid var(--border);border-radius:16px;overflow:hidden}
+    #gate header{border:0;background:none}
+    #gate .content{padding:16px}
+    #gate.hidden{display:none}
+    .muted{color:var(--muted)}
+    .fab{position:fixed;right:16px;bottom:16px;background:var(--accent);color:#fff;border:none;border-radius:999px;padding:12px 16px;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+  </style>
+</head>
+<body>
+  <div id="gate">
+    <div class="box">
+      <header><h2 style="margin:0;font-size:18px">Coach Login</h2></header>
+      <div class="content">
+        <div class="small muted" style="margin-bottom:8px">Enter the team coach password to continue.</div>
+        <input id="pw" type="password" placeholder="Coach password" style="width:100%">
+        <div class="row" style="margin-top:10px;justify-content:space-between">
+          <div class="small muted">Hint: Ask the head coach.</div>
+          <button id="loginBtn">Unlock</button>
+        </div>
+        <div id="msg" class="small danger" style="margin-top:8px;display:none">Incorrect password</div>
+      </div>
+    </div>
+  </div>
 
+  <header>
+    <h1>Operation Sky Core — Coach Dashboard <span class="small">(v1.0)</span></h1>
+    <div class="row">
+      <button id="installBtn" class="pill">Install App</button>
+      <button id="refreshBtn" class="pill">Refresh</button>
+      <button id="logoutBtn" class="pill">Lock</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <div class="row">
+          <select id="weekSel"></select>
+          <select id="daySel">
+            <option value="1">Day 1</option>
+            <option value="2">Day 2</option>
+            <option value="3">Day 3</option>
+          </select>
+          <button id="addPlayerBtn">+ Player</button>
+          <button id="delPlayerBtn" class="danger">Delete Player</button>
+        </div>
+        <div class="row">
+          <input id="search" placeholder="Search player">
+          <button id="exportBtn">Export CSV</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <strong>Roster</strong>
+      <table id="tbl">
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Week</th>
+            <th>Day</th>
+            <th>Completion</th>
+            <th>XP</th>
+            <th>Streak</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div class="small muted">Tip: Players appear as they use their app on this device. For team-wide hosting, deploy both apps and use the same browser on a shared coach device, or wire a backend later.</div>
+    </div>
+
+    <div class="card">
+      <strong>Player Detail</strong>
+      <div class="row small" style="gap:12px;margin:6px 0">
+        <span id="selPlayer" class="badge">No player selected</span>
+        <span class="badge" id="selXP">XP 0</span>
+        <span class="badge" id="selStreak">Streak 0</span>
+      </div>
+      <div class="progress"><div id="detailBar"></div></div>
+      <div id="detail" class="small" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+  <button id="installFab" class="fab" style="display:none">Install</button>
+
+<script>
+// PWA install
+let deferredPrompt=null;
+const installBtn=document.getElementById('installBtn');
+const installFab=document.getElementById('installFab');
+window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferredPrompt=e; installBtn.style.display='inline-block'; installFab.style.display='inline-block'; });
+function doInstall(){ if(!deferredPrompt) return; deferredPrompt.prompt(); deferredPrompt.userChoice.finally(()=>{ deferredPrompt=null; installBtn.style.display='none'; installFab.style.display='none'; }); }
+installBtn.onclick=doInstall; installFab.onclick=doInstall;
+
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
+
+// ---- Simple password gate (hard-coded) ----
+const COACH_PW = "Lynx2025!"; // capital L
+const GATE_KEY = "osc_coach_unlocked";
+const gate = document.getElementById('gate');
+const msg = document.getElementById('msg');
+function checkGate(){ try{ return sessionStorage.getItem(GATE_KEY)==='1'; }catch(e){ return false; } }
+function unlock(p){ if(p===COACH_PW){ try{sessionStorage.setItem(GATE_KEY,'1');}catch(e){} gate.classList.add('hidden'); } else { msg.style.display='block'; } }
+document.getElementById('loginBtn').onclick=()=>unlock(document.getElementById('pw').value);
+document.getElementById('pw').addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ unlock(e.target.value); } });
+document.getElementById('logoutBtn').onclick=()=>{ try{ sessionStorage.removeItem(GATE_KEY); }catch(e){} gate.classList.remove('hidden'); }
+if(checkGate()) gate.classList.add('hidden');
+
+// ---- Minimal shared schema (reads player data stored by player app on the same device/browser) ----
+const PROGRAM={1:{warmup:["1","2","3","4","5"],strength:[{sets:4},{sets:3},{sets:3},{sets:3},{sets:4}],core:["1","2"],jump:["1","2","3"]},
+              2:{warmup:["1","2","3","4","5"],strength:[{sets:4},{sets:3},{sets:3},{sets:3},{sets:3}],core:["1","2","3","4"],jump:["1","2","3","4"]},
+              3:{warmup:["1","2","3","4"],strength:[{sets:4},{sets:4},{sets:3},{sets:3},{sets:3}],core:["1","2"],jump:["1","2","3"]} };
+const listKey="osc_players";
+const xpKey=(p)=>`osc_xp_${p}`; const streakKey=(p)=>`osc_streak_${p}`; const lastKey=(p)=>`osc_last_${p}`; const settingsKey=(p)=>`osc_settings_${p}`;
+const key=(p,d,w)=>`osc_p${p}_d${d}_w${w}`;
+
+function ls(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function parse(k,def){ try{ const v=ls(k); return v?JSON.parse(v):def; }catch(e){ return def; } }
+function listPlayers(){ return parse(listKey,[]); }
+function savePlayers(arr){ try{ localStorage.setItem(listKey, JSON.stringify(arr)); }catch(e){} }
+
+// UI elements
+const tbody=document.getElementById('tbody'); const daySel=document.getElementById('daySel'); const weekSel=document.getElementById('weekSel');
+const search=document.getElementById('search'); const addPlayerBtn=document.getElementById('addPlayerBtn'); const delPlayerBtn=document.getElementById('delPlayerBtn');
+const exportBtn=document.getElementById('exportBtn'); const refreshBtn=document.getElementById('refreshBtn');
+const selPlayer=document.getElementById('selPlayer'); const selXP=document.getElementById('selXP'); const selStreak=document.getElementById('selStreak'); const detailBar=document.getElementById('detailBar'); const detail=document.getElementById('detail');
+
+for(let w=1; w<=12; w++){ const o=document.createElement('option'); o.value=w; o.textContent='Week '+w; weekSel.appendChild(o); }
+weekSel.value='1';
+
+let selected=null;
+
+function totalBoxes(d){
+  let t=0; t+=PROGRAM[d].warmup.length + PROGRAM[d].core.length + PROGRAM[d].jump.length;
+  PROGRAM[d].strength.forEach(x=>t+=x.sets); return t;
+}
+function doneBoxes(d,data){
+  let c=0; data.warmup?.forEach(x=>{if(x)c++;});
+  data.core?.forEach(x=>{if(x)c++;});
+  data.jump?.forEach(x=>{if(x)c++;});
+  PROGRAM[d].strength.forEach((blk,i)=>data.strength?.[i]?.sets?.forEach(s=>{if(s.done)c++;}));
+  return c;
+}
+
+function rowFor(p){
+  const d=+daySel.value, w=+weekSel.value;
+  const entry=parse(key(p,d,w), {warmup:[], strength:[], core:[], jump:[]});
+  const boxes=totalBoxes(d);
+  const done=doneBoxes(d, entry);
+  const tr=document.createElement('tr'); tr.dataset.name=p;
+  tr.innerHTML=`
+    <td><button class="pill" data-p="${p}">${p}</button></td>
+    <td>${w}</td>
+    <td>${d}</td>
+    <td>
+      <div class="progress"><div style="width:${Math.round(100*done/Math.max(1,boxes))}%"></div></div>
+    </td>
+    <td>${+(ls(xpKey(p))||0)}</td>
+    <td>${+(ls(streakKey(p))||0)}</td>`;
+  tr.querySelector('button').onclick=()=>selectPlayer(p);
+  return tr;
+}
+
+function renderTable(){
+  const q=(search.value||'').toLowerCase();
+  const arr=listPlayers().filter(n=> n.toLowerCase().includes(q));
+  tbody.innerHTML='';
+  arr.forEach(p=>tbody.appendChild(rowFor(p)));
+}
+
+function selectPlayer(p){
+  selected=p; selPlayer.textContent=p||'No player selected';
+  selXP.textContent='XP '+ (+(ls(xpKey(p))||0));
+  selStreak.textContent='Streak '+ (+(ls(streakKey(p))||0));
+  const d=+daySel.value, w=+weekSel.value;
+  const entry=parse(key(p,d,w), {warmup:[],strength:[],core:[],jump:[]});
+  const boxes=totalBoxes(d); const done=doneBoxes(d, entry);
+  detailBar.style.width = Math.round(100*done/Math.max(1,boxes))+'%';
+  detail.innerHTML = '<pre style="white-space:pre-wrap">'+ JSON.stringify(entry, null, 2) + '</pre>';
+}
+
+daySel.onchange=()=>{ renderTable(); if(selected) selectPlayer(selected); };
+weekSel.onchange=()=>{ renderTable(); if(selected) selectPlayer(selected); };
+search.oninput=renderTable;
+refreshBtn.onclick=()=>{ renderTable(); if(selected) selectPlayer(selected); };
+
+addPlayerBtn.onclick=()=>{
+  const n=(prompt('New player name')||'').trim();
+  if(!n) return;
+  const arr=new Set(listPlayers()); arr.add(n); savePlayers(Array.from(arr)); renderTable();
+};
+delPlayerBtn.onclick=()=>{
+  if(!selected){ alert('Select a player first'); return; }
+  if(!confirm('Delete '+selected+' from this device? This does not affect other devices.')) return;
+  const base=selected; const d=+daySel.value;
+  // remove keys for this player
+  try{
+    for(let w=1; w<=12; w++){
+      for(let day=1; day<=3; day++){
+        localStorage.removeItem(key(base,day,w));
+      }
+    }
+    localStorage.removeItem(xpKey(base));
+    localStorage.removeItem(streakKey(base));
+    localStorage.removeItem(lastKey(base));
+    localStorage.removeItem(settingsKey(base));
+  }catch(e){}
+  // update roster
+  const arr=listPlayers().filter(x=>x!==base); savePlayers(arr);
+  selected=null; renderTable(); selectPlayer(null);
+};
+
+exportBtn.onclick=()=>{
+  const rows=[["Player","Week","Day","Completion %","XP","Streak"]];
+  listPlayers().forEach(p=>{
+    const d=+daySel.value, w=+weekSel.value;
+    const entry=parse(key(p,d,w), {warmup:[],strength:[],core:[],jump:[]});
+    const boxes=totalBoxes(d); const done=doneBoxes(d, entry);
+    rows.push([p,w,d, Math.round(100*done/Math.max(1,boxes))+"%", +(ls(xpKey(p))||0), +(ls(streakKey(p))||0)]);
+  });
+  const csv=rows.map(r=>r.map(x=>`"${String(x).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='OSC_Coach_Roster.csv'; a.click();
+};
+
+// initial fill
+renderTable();
+</script>
+</body>
+</html>
