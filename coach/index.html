@@ -87,6 +87,7 @@ footer{margin:18px 0 8px}
           <input id="search" placeholder="Search by name…" />
         </div>
       </div>
+<div id="app" class="hidden">
 
       <table class="table" id="tbl">
         <thead>
@@ -290,6 +291,7 @@ function init(){
   // set default filters
   filterWeek.value = filterWeek.value || "1";
   filterDay.value = filterDay.value || "1";
+  loadPlayersFromSheet();
   render();
 }
 
@@ -301,6 +303,20 @@ requireLogin();
 <script>
 (function () {
   const PASS = 'Lynx2025!'; // capital L, exclamation
+  // Google Sheet connection
+const sheetUrl = "https://script.google.com/macros/s/AKfycbzQmac5DoL56vY6EJ_1fjfCZntyeS7hYt2n9ZgUZVpARpbyAMdJ6Dnj_Semnvwb1VJ3/exec";
+
+async function loadPlayersFromSheet() {
+  try {
+    const res = await fetch(sheetUrl);
+    const data = await res.json();
+    console.log("Loaded from Sheet:", data);
+    // TODO: display data in the table later
+  } catch (err) {
+    console.error("Sheet load failed:", err);
+  }
+}
+
   const gate = document.getElementById('gate');        // the login card
   const inp  = document.getElementById('coachPass');   // <input> for password
   const btn  = document.getElementById('enterBtn');    // "Enter" button
@@ -325,8 +341,24 @@ requireLogin();
     if (app) app.style.display = '';
   }
 })();
+</div>
 </script>
 
 </body>
+  <!-- LOGIN GATE -->
+<div id="gate" style="max-width:800px;margin:24px auto">
+  <div style="background:#163678;border:1px solid #263a64;border-radius:12px;padding:16px">
+    <h2 style="margin:0 0 12px">Operation Sky Core — Coach Dashboard</h2>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input id="coachPass" type="password" placeholder="Coach password"
+             style="flex:1;background:#102a5a;border:1px solid #263a64;color:#e7eef9;border-radius:10px;padding:10px 12px">
+      <button id="enterBtn" style="background:#2d6edc;border:1px solid #263a64;color:white;border-radius:10px;padding:10px 14px;cursor:pointer">
+        Enter
+      </button>
+      <span style="color:#a0b8d6">Hint: mascot + year + !</span>
+    </div>
+  </div>
+</div>
+
 </html>
 
