@@ -195,33 +195,21 @@
     }
 
     // ---------- Sheet merge ----------
-    async function loadPlayersFromSheet(){
-      if(!sheetUrl) return;
-      try{
-        const res = await fetch(sheetUrl+"?t="+Date.now(), {cache:"no-store"});
-        const raw = await res.json();
-        const arr = Array.isArray(raw) ? raw : (raw.data || []);
-        if(!Array.isArray(arr)) return;
+    async function loadPlayersFromSheet() {
+  try {
+    const res = await fetch("https://script.google.com/macros/s/AKfycbzd3Qmac5bOtS6vY6Ej_IfjCZmtyse7Vytn29gZ7vPAkgDyAW4JGDnj_SemmvwblVJi/exec"); // same /exec URL
+    const data = await res.json();
+    if (!data || !data.ok) return;
 
-        const store = loadStore();
-        store.players = store.players || {};
+    const store = loadStore();
+    store.players = data.players || {};
+    saveStore(store);
+    render();
+  } catch (err) {
+    console.error("Sheet load failed:", err);
+  }
+}
 
-        arr.forEach(row=>{
-          const name = String(row.name || row.player || "").trim();
-          if(!name) return;
-          const week = Number(row.week)||1;
-          const day  = Number(row.day)||1;
-          const completed = Number(row.completed)||0;
-          const xp = Number(row.xp)||0;
-          const streak = Number(row.streak)||0;
-          store.players[name] = {name, week, day, completed, xp, streak};
-        });
-
-        saveStore(store);
-      }catch(err){
-        console.warn("Sheet load failed:", err);
-      }
-    }
 
     // ---------- Render ----------
     function render(){
