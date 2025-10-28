@@ -3,62 +3,222 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="manifest" href="../manifest.webmanifest">
 <meta name="theme-color" content="#0c204a">
-<title>Operation Sky Core — Player (v3.2.0)</title>
+<title>Operation Sky Core — Player (v3.3.0)</title>
 <style>
 :root{--bg:#0c204a;--panel:#163678;--text:#e7eef9;--muted:#a0b8d6;--border:#263a64;--accent:#2d6edc}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
 .wrap{max-width:980px;margin:0 auto;padding:16px}
 header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-h1{font-size:18px;margin:0}
-.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-input,select,button,textarea{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 12px;font-size:14px}
-button{cursor:pointer}
+h1{font-size:18px;margin:0}.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:12px;margin:12px 0}
-.progress{height:10px;background:#0b1a3a;border-radius:999px;border:1px solid var(--border);overflow:hidden;flex:1}
+.small{font-size:12px;color:var(--muted)} .chip{border:1px solid var(--border);background:var(--panel);color:var(--muted);border-radius:999px;padding:6px 10px;font-size:12px}
+.progress{height:10px;background:#0b1a3a;border-radius:999px;border:1px solid var(--border);overflow:hidden}
 .progress>div{height:100%;background:var(--accent);width:0%}
-.small{font-size:12px;color:var(--muted)}
-.exercise-link{text-decoration:underline;cursor:pointer}
-.hidden{display:none}
-.fab{z-index:2147483647;position:fixed;right:14px;bottom:14px;background:#2d6edc;color:#fff;border:none;border-radius:999px;padding:12px 16px;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.note{width:100%;min-height:70px}
+.fab{position:fixed;right:14px;bottom:14px;background:#2d6edc;color:#fff;border:none;border-radius:999px;padding:12px 16px;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,.3);cursor:pointer}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:16px}
+.modal .box{background:#0e1f4a;border:1px solid var(--border);max-width:520px;width:100%;border-radius:14px;overflow:hidden}
+.modal header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.modal .content{padding:16px}
+.modal h3{margin:0;font-size:18px}.modal .close{margin-left:auto}
+input,button,textarea,select{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 12px;font-size:14px}
+label{display:block;margin-top:10px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="row">
-    <h1>Operation Sky Core — <span id="phaseLabel">Phase 1</span> <span class="small">(Player v3.2.0)</span></h1>
+    <h1>Operation Sky Core — Phase 1 <span class="small" id="ver">(Player v3.3.0)</span></h1>
     <div class="row">
-      <select id="player"></select>
+      <span class="chip" id="who">Player: —</span>
       <select id="daySel"><option value="1">Day 1</option><option value="2">Day 2</option><option value="3">Day 3</option></select>
-      <select id="week"></select>
-      <button id="settingsBtn">Settings</button>
+      <select id="weekSel"></select>
+      <button id="settingsTop">Settings</button>
     </div>
   </header>
 
-  <div id="hdr" class="row">
-    <span class="small">CORE Butte High Lynx | Blue & White</span>
-  </div>
-
   <div class="card">
-    <strong>Why today matters</strong>
-    <div id="why">Building strength, control, and coordination — one day at a time.</div>
+    <strong>Progress</strong>
+    <div class="progress" style="margin-top:8px"><div id="daybar"></div></div>
   </div>
 
-  <div id="content" class="card">Workouts load here...</div>
+  <div class="card"><strong>Why today matters</strong><div id="why" class="small" style="margin-top:6px"></div></div>
+  <div id="content"></div>
+  <div class="card"><strong>Notes</strong><textarea id="notes" class="note" placeholder="Notes for today..."></textarea></div>
+</div>
 
-  <div class="card"><strong>Notes</strong>
-    <textarea id="notes" class="note" placeholder="Notes for today..."></textarea>
+<button id="settingsFab" class="fab">Settings</button>
+
+<!-- Settings modal -->
+<div class="modal" id="settingsModal" aria-hidden="true">
+  <div class="box">
+    <header><h3>Player Settings</h3><button class="close" id="closeSettings">Close</button></header>
+    <div class="content">
+      <label>Player name
+        <input id="sPlayer" placeholder="Your name">
+      </label>
+      <label>School
+        <input id="sSchool" placeholder="School" value="CORE Butte High">
+      </label>
+      <label>Mascot
+        <input id="sMascot" placeholder="Mascot" value="Lynx">
+      </label>
+      <label>Colors
+        <input id="sColors" placeholder="Colors" value="Blue & White">
+      </label>
+      <label>Coach Sync URL (optional)
+        <input id="sCoachUrl" placeholder="https://example.com/collect">
+      </label>
+      <div class="row" style="margin-top:12px;justify-content:flex-end">
+        <button id="saveSettings">Save</button>
+      </div>
+      <div class="small" style="margin-top:8px">Saved only on this device. Name will not be asked again here.</div>
+    </div>
   </div>
 </div>
 
-<button id="fabSettings" class="fab" onclick="openSettings()">Settings</button>
-
 <script>
-function openSettings(){
-  alert("Settings would appear here — this confirms the button is active.");
+if('serviceWorker' in navigator){navigator.serviceWorker.register('../sw.js').catch(()=>{});}
+
+// --- tiny sample program so the page is not blank ---
+const PROGRAM = {
+  1:{why:["Building strength, control, and coordination."], warmup:["Leg Swings — 10 each","Bodyweight Squat — 3×10"], strength:["Goblet Squat — 4×6–8","RDL — 3×8–10"], core:["Plank — 3×30–45s"], jump:["Form jumps — 3×10"]},
+  2:{why:["Upper strength supports arm swing and stable landings."], warmup:["Arm Circles — 15/15","Push-up to Down Dog — 8"], strength:["Bench Press — 4×6–8","Row — 3×10"], core:["Side Plank — 3×30s each"], jump:["MB Chest Pass — 3×10"]},
+  3:{why:["Fast contacts train spring. Keep landings quiet."], warmup:["Dynamic Skips — 2×20 yds","A-Skips — 20 yds"], strength:["Box Jump — 4×5","Lateral Bounds — 3×6 each"], core:["Hip Thrust — 3×10"], jump:["Two-step approach jumps — 5–8"]}
+};
+const WEEKS=12;
+
+// --- storage helpers keyed by bound player ---
+const listKey="osc_players";
+const settingsKey=(p)=>`osc_settings_${p}`;
+const boundKey="osc_bound_player";
+const entryKey=(p,d,w)=>`osc_p${p}_d${d}_w${w}`;
+
+function loadPlayers(){ try{ return JSON.parse(localStorage.getItem(listKey)||'[]'); }catch(e){ return []; } }
+function savePlayers(v){ localStorage.setItem(listKey, JSON.stringify(v)); }
+function loadSettings(p){ return JSON.parse(localStorage.getItem(settingsKey(p))||'{"school":"CORE Butte High","mascot":"Lynx","colors":"Blue & White","coachUrl":""}'); }
+function saveSettingsFor(p, s){ localStorage.setItem(settingsKey(p), JSON.stringify(s)); }
+function loadEntry(p,d,w){ const raw=localStorage.getItem(entryKey(p,d,w)); return raw?JSON.parse(raw):null; }
+function saveEntry(p,d,w,val){ localStorage.setItem(entryKey(p,d,w), JSON.stringify(val)); }
+
+const who=document.getElementById('who');
+const daySel=document.getElementById('daySel');
+const weekSel=document.getElementById('weekSel');
+const whyDiv=document.getElementById('why');
+const content=document.getElementById('content');
+const notes=document.getElementById('notes');
+const daybar=document.getElementById('daybar');
+
+for(let w=1; w<=WEEKS; w++){ const o=document.createElement('option'); o.value=w; o.textContent="Week "+w; weekSel.appendChild(o); }
+if(!weekSel.value) weekSel.value=1;
+
+function ensureBoundName(){
+  let nm = localStorage.getItem(boundKey);
+  if(!nm){
+    nm = (prompt("Enter your name")||"").trim();
+    if(!nm){ alert("Name is required."); return ensureBoundName(); }
+    const list = loadPlayers(); if(!list.includes(nm)){ list.push(nm); savePlayers(list); }
+    localStorage.setItem(boundKey, nm);
+  }
+  return nm;
 }
+
+function currentPlayer(){ return localStorage.getItem(boundKey); }
+
+function initEntry(day){
+  return {
+    warmup: PROGRAM[day].warmup.map(()=>false),
+    strength: PROGRAM[day].strength.map(()=>false),
+    core: PROGRAM[day].core.map(()=>false),
+    jump: PROGRAM[day].jump.map(()=>false),
+    notes:""
+  };
+}
+
+function render(){
+  const p=currentPlayer(); const d=+daySel.value; const w=+weekSel.value||1;
+  const set=loadSettings(p);
+  who.textContent = "Player: " + p;
+  document.title = `Operation Sky Core — Player (${p})`;
+  whyDiv.innerHTML = PROGRAM[d].why.map(t=>`<div>• ${t}</div>`).join("");
+  const data = loadEntry(p,d,w)||initEntry(d);
+  content.innerHTML="";
+  function section(title, arr, key){
+    const card=document.createElement('div'); card.className="card"; card.innerHTML=`<strong>${title}</strong>`;
+    arr.forEach((it,idx)=>{
+      const row=document.createElement('div'); row.className="row"; row.style.marginTop="6px";
+      const cb=document.createElement('input'); cb.type="checkbox"; cb.checked=data[key][idx];
+      cb.onchange=()=>{ data[key][idx]=cb.checked; saveEntry(p,d,w,data); updateBar(); };
+      const span=document.createElement('span'); span.textContent=" "+it; row.appendChild(cb); row.appendChild(span); card.appendChild(row);
+    });
+    content.appendChild(card);
+  }
+  section("Warm-Up", PROGRAM[d].warmup, "warmup");
+  section("Strength", PROGRAM[d].strength, "strength");
+  section("Core", PROGRAM[d].core, "core");
+  section("Jump Mechanics", PROGRAM[d].jump, "jump");
+  notes.value=data.notes||"";
+  notes.oninput=()=>{ data.notes=notes.value; saveEntry(p,d,w,data); };
+  updateBar();
+  // tag line with school/mascot/colors
+  const tag = `${set.school||"School"} ${set.mascot||"Mascot"} | ${set.colors||""}`;
+  if(!document.getElementById('schoolTag')){
+    const t=document.createElement('div'); t.id='schoolTag'; t.className='small'; t.style.marginTop='-6px'; t.style.opacity='.8';
+    document.querySelector('.wrap').insertBefore(t, document.querySelector('.wrap').children[1]);
+  }
+  document.getElementById('schoolTag').textContent = tag;
+}
+
+function updateBar(){
+  const p=currentPlayer(); const d=+daySel.value; const w=+weekSel.value||1;
+  const data=loadEntry(p,d,w)||initEntry(d);
+  const total = data.warmup.length + data.strength.length + data.core.length + data.jump.length;
+  const done = [...data.warmup, ...data.strength, ...data.core, ...data.jump].filter(Boolean).length;
+  daybar.style.width = (100*done/Math.max(1,total)) + "%";
+}
+
+// --- settings modal wiring ---
+const settingsModal=document.getElementById('settingsModal');
+const openBtns=[document.getElementById('settingsFab'), document.getElementById('settingsTop')];
+const closeBtn=document.getElementById('closeSettings');
+const saveBtn=document.getElementById('saveSettings');
+const sPlayer=document.getElementById('sPlayer');
+const sSchool=document.getElementById('sSchool');
+const sMascot=document.getElementById('sMascot');
+const sColors=document.getElementById('sColors');
+const sCoachUrl=document.getElementById('sCoachUrl');
+
+openBtns.forEach(b=>b.onclick=()=>{
+  const p=currentPlayer();
+  const set=loadSettings(p);
+  sPlayer.value=p||"";
+  sSchool.value=set.school||"";
+  sMascot.value=set.mascot||"";
+  sColors.value=set.colors||"";
+  sCoachUrl.value=set.coachUrl||"";
+  settingsModal.style.display='flex';
+});
+closeBtn.onclick=()=>settingsModal.style.display='none';
+
+saveBtn.onclick=()=>{
+  const oldName=currentPlayer();
+  const newName=(sPlayer.value||"").trim()||oldName;
+  if(newName!==oldName){
+    // rename in list and bind
+    const list=loadPlayers().filter(n=>n!==oldName); if(!list.includes(newName)) list.push(newName); savePlayers(list);
+    localStorage.setItem(boundKey,newName);
+  }
+  saveSettingsFor(newName,{school:sSchool.value.trim(),mascot:sMascot.value.trim(),colors:sColors.value.trim(),coachUrl:sCoachUrl.value.trim()});
+  settingsModal.style.display='none';
+  render();
+};
+
+// first run
+ensureBoundName();
+render();
+
 </script>
 </body>
 </html>
