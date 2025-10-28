@@ -1,1156 +1,647 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#0c204a" />
-  <title>Operation Sky Core — Phase 1 (Player v3.4.1)</title>
-  <link rel="manifest" href="../manifest.webmanifest" />
-  <style>
-    :root {
-      --bg: #0c204a;
-      --panel: #163678;
-      --text: #e7eef9;
-      --muted: #a0b8d6;
-      --border: #263a64;
-      --accent: #2d6edc;
-    }
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Inter, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-    }
-    .wrap {
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 16px;
-    }
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    h1 {
-      font-size: 18px;
-      margin: 0;
-    }
-    .row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-    }
-    input,
-    select,
-    button,
-    textarea {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 10px;
-      padding: 10px 12px;
-      font-size: 14px;
-    }
-    button {
-      cursor: pointer;
-    }
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px;
-      margin: 12px 0;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 60px 70px 1fr;
-      gap: 8px;
-      align-items: center;
-    }
-    .gridHeader {
-      color: var(--muted);
-      font-weight: 700;
-      font-size: 12px;
-    }
-    .note {
-      width: 100%;
-      min-height: 70px;
-    }
-    .chip {
-      border: 1px solid var(--border);
-      background: var(--panel);
-      color: var(--muted);
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 12px;
-    }
-    .muted {
-      color: var(--muted);
-    }
-    .badges {
-      display: flex;
-      gap: 6px;
-    }
-    .badge {
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 4px 8px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .progress {
-      height: 10px;
-      background: #0b1a3a;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      overflow: hidden;
-      flex: 1;
-    }
-    .progress > div {
-      height: 100%;
-      background: var(--accent);
-      width: 0%;
-    }
-    .small {
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .exercise-link {
-      text-decoration: underline;
-      cursor: pointer;
-    }
-    .hidden {
-      display: none;
-    }
-    #settings {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
-      margin-top: 10px;
-    }
-    #settings input {
-      margin-bottom: 8px;
-      width: 100%;
-    }
-    .fab {
-      position: fixed;
-      right: 14px;
-      bottom: 14px;
-      background: #2d6edc;
-      color: #fff;
-      border: none;
-      border-radius: 999px;
-      padding: 12px 16px;
-      font-weight: 600;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
-      z-index: 1000;
-    }
-  </style>
-</head>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0c204a">
+<title>Operation Sky Core — <span id="phaseTitle">Phase 1</span> (Player)</title>
+<style>
+:root{
+  --bg:#0c204a;--panel:#163678;--text:#e7eef9;--muted:#a0b8d6;--border:#2b447a;--accent:#2d6edc;--hi:#5b82ff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+h1{font-size:18px;margin:0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+input,select,button,textarea{
+  background:var(--panel);border:1px solid var(--border);color:var(--text);
+  border-radius:10px;padding:10px 12px;font-size:14px
+}
+button{cursor:pointer}
+.card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:12px; margin:12px 0;
+  box-shadow:0 2px 0 rgba(0,0,0,.12), inset 0 0 0 1px rgba(255,255,255,.04)
+}
+.grid{display:grid;grid-template-columns:1fr 60px 70px 1fr;gap:8px;align-items:center}
+.gridHeader{color:var(--muted);font-weight:700;font-size:12px}
+.note{width:100%;min-height:70px}
+.chip{border:1px solid var(--border);background:var(--panel);color:var(--muted);border-radius:999px;padding:6px 10px;font-size:12px}
+.muted{color:var(--muted)}
+.lynx{display:inline-flex;align-items:center;gap:6px}
+.lynx:before{content:"🐾"}
+.badges{display:flex;gap:6px}
+.badge{border:1px solid var(--border);border-radius:999px;padding:4px 8px;font-size:12px;color:var(--muted)}
+.progress{height:10px;background:#0b1a3a;border-radius:999px;border:1px solid var(--border);overflow:hidden;flex:1}
+.progress>div{height:100%;background:var(--accent);width:0%}
+.small{font-size:12px;color:var(--muted)}
+.exercise-link{
+  text-decoration:underline;cursor:pointer;
+  color:#cfe0ff;border-bottom:1px dashed rgba(255,255,255,.25);
+}
+.exercise-link:hover{color:#fff}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:16px}
+.modal .box{background:#0e1f4a;border:1px solid var(--border);max-width:720px;width:100%;border-radius:14px;overflow:hidden}
+.modal header{padding:12px 16px;border-bottom:1px solid var(--border)}
+.modal .content{padding:16px}
+.modal h3{margin:0;font-size:18px}
+.modal ul{margin:.25rem 0 .75rem 1.25rem}
+.modal .close{margin-left:auto}
+.hidden{display:none}
+.outline{border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:8px}
+.hr{height:1px;background:rgba(255,255,255,.1);margin:8px 0}
+</style></head>
 <body>
-  <div class="wrap">
-    <header class="row">
-      <h1>
-        Operation Sky Core — <span id="phaseLabel">Phase 1</span>
-        <span class="small" id="verLabel">(Player v3.4.1)</span>
-      </h1>
-      <div class="row">
-        <select id="player"></select>
-        <select id="daySel">
-          <option value="1">Day 1</option>
-          <option value="2">Day 2</option>
-          <option value="3">Day 3</option>
-        </select>
-        <select id="weekSel"></select>
-        <button id="exportCsv">Export</button>
-      </div>
-    </header>
-
-    <div id="hdr" class="row">
-      <span class="chip" id="schoolTag">CORE Butte High Lynx | Blue & White</span>
-      <span class="chip" id="xp">XP 0</span>
-      <span class="chip" id="streak">Streak 0</span>
-      <div class="badges" id="badges"></div>
-    </div>
-
-    <div class="card">
-      <strong>Progress</strong>
-      <div class="progress"><div id="xpbar"></div></div>
-      <div class="small">Badges: Bronze 100 | Silver 300 | Gold 600</div>
-    </div>
-
-    <div class="card"><strong>Why today matters</strong><div id="why"></div></div>
-    <div id="content"></div>
-    <div class="card"><strong>Notes</strong><textarea id="notes" class="note" placeholder="Notes for today..."></textarea></div>
-  </div>
-
-  <button id="fabSettings" class="fab" onclick="openSettings()">Settings</button>
-  <div id="settings" class="hidden">
-    <strong>Settings</strong>
-    <div class="row" style="margin-top:8px">
-      <input id="sPlayerName" placeholder="Player name" disabled />
-      <input id="sCoachUrl" placeholder="Coach Sync URL (auto)" disabled />
-    </div>
-  </div>
-<script>
-/* ---------- CONFIG (auto) ---------- */
-const CONFIG = { coachUrl: "" };
-(async () => {
-  try {
-    const r = await fetch("config.json", { cache: "no-store" });
-    if (r.ok) {
-      const j = await r.json();
-      if (j && j.coachUrl) CONFIG.coachUrl = j.coachUrl;
-    }
-  } catch {}
-  // Fallback from localStorage if present
-  CONFIG.coachUrl = CONFIG.coachUrl || localStorage.getItem("osc_default_coach_url") || "";
-  // Reflect in disabled settings fields
-  document.getElementById("sCoachUrl").value = CONFIG.coachUrl || "(not set)";
-})();
-
-/* ---------- PROGRAM ---------- */
-const PROGRAM = {
-  1: {
-    label: "Day 1 — Lower Body + Jump",
-    why: [
-      "Heavy basics raise leg drive and stable landings.",
-      "Strong positions protect knees and back."
-    ],
-    warmup: [
-      "Leg Swings — 10 each",
-      "Walking Lunges — 10 each",
-      "Bodyweight Squat — 3×10",
-      "Standing Calf Raise — 3×10",
-      "Light Jumps — 3×5"
-    ],
-    strength: [
-      { ex: "Back or Goblet Squat", sets: 4, reps: "6–8" },
-      { ex: "Romanian Deadlift", sets: 3, reps: "8–10" },
-      { ex: "Walking Lunges", sets: 3, reps: "10 each" },
-      { ex: "Bulgarian Split Squat", sets: 3, reps: "8 each" },
-      { ex: "Standing Calf Raise (Loaded)", sets: 4, reps: "12–15" }
-    ],
-    core: ["Hanging Knee Raise — 3×10", "Plank — 3×30–45s"],
-    jump: [
-      "Two-step approach jumps — 5",
-      "Touch rim/backboard — 3×5",
-      "Form jumps — 3×10"
-    ]
-  },
-  2: {
-    label: "Day 2 — Upper Body + Core",
-    why: [
-      "Stronger torso keeps power from leaking.",
-      "Arm swing speed adds inches to reach."
-    ],
-    warmup: [
-      "Arm Circles — 15/15",
-      "Band Pull-Apart — 15",
-      "Push-up to Down Dog — 8",
-      "Shoulder Taps — 10/side",
-      "Jumping Jacks — 30s"
-    ],
-    strength: [
-      { ex: "Barbell or DB Bench Press", sets: 4, reps: "6–8" },
-      { ex: "Pull-Ups / Assisted Pull-Ups", sets: 3, reps: "6–10" },
-      { ex: "Standing Overhead Press", sets: 3, reps: "8" },
-      { ex: "1-Arm Dumbbell Row", sets: 3, reps: "10 each" },
-      { ex: "Triceps Dips or Pushdowns", sets: 3, reps: "12–15" }
-    ],
-    core: [
-      "Hanging Leg Raise — 3×10",
-      "Side Plank — 3×30s each",
-      "Stability Ball Roll-outs — 3×12",
-      "Bird Dog — 3×10 each"
-    ],
-    jump: [
-      "MB Chest Pass — 3×10",
-      "Overhead MB Slam — 3×10",
-      "Clap or Plyo Push-ups — 3×6",
-      "Sprint 20 yds × 6"
-    ]
-  },
-  3: {
-    label: "Day 3 — Plyos + Practice",
-    why: ["Fast contacts train spring.", "Approach jumps wire skill to power."],
-    warmup: [
-      "Dynamic Skips — 2×20 yds",
-      "A-Skips & High Knees — 20 yds each",
-      "Light Bounding — 2×10",
-      "Submax Jumps — 3 at 50–70%"
-    ],
-    strength: [
-      { ex: "Box Jump", sets: 4, reps: "5" },
-      { ex: "Broad Jump", sets: 4, reps: "5" },
-      { ex: "Lateral Bounds", sets: 3, reps: "6 each" },
-      { ex: "Depth Drop → Vertical", sets: 3, reps: "5" },
-      { ex: "Jump Squat (Bodyweight)", sets: 3, reps: "8" }
-    ],
-    core: ["Trap/Barbell Deadlift — 4×5", "Hip Thrust or Glute Bridge — 3×10"],
-    jump: [
-      "Two-step approach jumps — 8",
-      "Touch rim/backboard — 3×5",
-      "Dunk attempts — 5–10"
-    ]
-  }
-};
-
-/* ---------- Exercise Library (coach cards) ---------- */
-const EX = {
-  "Leg Swings": {
-    setup: ["Hold wall or rack for balance", "Stand tall; brace lightly"],
-    exec: ["Swing forward/back 10–15", "Side-to-side 10–15"],
-    focus: ["Smooth rhythm", "Do not force range"],
-    mistakes: ["Wild swings", "Torso twisting"],
-    why: ["Lubricates hips and prepares for jumping"]
-  },
-  "Bodyweight Squat": {
-    setup: ["Feet shoulder width; toes slightly out"],
-    exec: ["Sit between heels; chest proud; stand tall"],
-    focus: ["Knees track over toes", "Heels stay down"],
-    mistakes: ["Knees cave", "Rounding back"],
-    why: ["Grooves squat pattern for safe loading"]
-  },
-  "Standing Calf Raise": {
-    setup: ["Feet shoulder width; neutral pelvis"],
-    exec: ["Rise tall, pause 1s; lower 2–3s"],
-    focus: ["Full range", "Even pressure across forefoot"],
-    mistakes: ["Half reps", "Ankles rolling"],
-    why: ["Improves ankle stiffness and elastic recoil"]
-  },
-  "Light Jumps": {
-    setup: ["Athletic stance"],
-    exec: ["Quick dip; jump light; land soft; reset"],
-    focus: ["Quiet feet", "Small height; form first"],
-    mistakes: ["Stomping", "Knees collapse"],
-    why: ["Primes nervous system without fatigue"]
-  },
-  "Walking Lunges": {
-    setup: ["Stand tall; optional light DBs"],
-    exec: ["Step forward; lower till back knee hovers", "Push through front heel"],
-    focus: ["Even steps; tall torso", "Knee over mid-foot"],
-    mistakes: ["Short steps", "Torso collapse"],
-    why: ["Single-leg strength and balance"]
-  },
-  "Back or Goblet Squat": {
-    setup: ["Feet shoulder width; brace", "Goblet DB at chest / Bar on traps"],
-    exec: ["Lower 2–3s; explode up; heels down"],
-    focus: ["Controlled depth", "Brace hard"],
-    mistakes: ["Heels up", "Knees cave"],
-    why: ["Raises leg force for takeoff"]
-  },
-  "Romanian Deadlift": {
-    setup: ["Feet hip width; soft knees; lats tight"],
-    exec: ["Hips back; bar close; stand by glutes"],
-    focus: ["Neutral spine", "Bar path close"],
-    mistakes: ["Locked knees", "Bar drifts"],
-    why: ["Glute/ham drive adds inches to vertical"]
-  },
-  "Bulgarian Split Squat": {
-    setup: ["Rear foot on bench; front foot forward"],
-    exec: ["Lower straight down; slight forward torso", "Drive through front heel"],
-    focus: ["Front leg works", "Knee over toes"],
-    mistakes: ["Pushing off back leg"],
-    why: ["Unilateral force in jump positions"]
-  },
-  "Standing Calf Raise (Loaded)": {
-    setup: ["Machine/Smith or DBs"],
-    exec: ["Full rise 1s; slow 2–3s lower"],
-    focus: ["No bounce", "Stay tall"],
-    mistakes: ["Half reps", "Leaning"],
-    why: ["Stronger plantarflexors"]
-  },
-  "Hanging Knee Raise": {
-    setup: ["Hang; ribs down"],
-    exec: ["Lift knees to hip height; no swing"],
-    focus: ["Control", "Exhale on lift"],
-    mistakes: ["Swinging"],
-    why: ["Trunk control for power transfer"]
-  },
-  "Plank": {
-    setup: ["Elbows under shoulders; straight line"],
-    exec: ["Brace glutes/abs; breathe behind brace"],
-    focus: ["Neutral spine"],
-    mistakes: ["Sagging hips"],
-    why: ["Rigid torso to transmit leg power"]
-  },
-  "Two-step approach jumps": {
-    setup: ["Short two-step run-up"],
-    exec: ["Quick plant; load; full arm swing; explode"],
-    focus: ["Timing plant", "Fast transition"],
-    mistakes: ["Choppy steps"],
-    why: ["Game rhythm and elastic timing"]
-  },
-  "Form jumps": {
-    setup: ["Feet under shoulders"],
-    exec: ["Jump straight up; land soft; reset"],
-    focus: ["Quiet feet", "Knees track over toes"],
-    mistakes: ["Stomping"],
-    why: ["Perfect jump pattern and landing"]
-  },
-  "Touch rim/backboard": {
-    setup: ["Consistent approach"],
-    exec: ["Reach tall at peak; stick the landing"],
-    focus: ["Consistency", "Full extension"],
-    mistakes: ["Changing rhythm"],
-    why: ["Measurable target; peak reach timing"]
-  },
-  "Barbell or DB Bench Press": {
-    setup: ["Feet planted; shoulders back"],
-    exec: ["Lower to mid-chest; elbows ~45°; press"],
-    focus: ["Stable base", "Explosive press"],
-    mistakes: ["Flaring elbows"],
-    why: ["Faster arm swing and stronger finish"]
-  },
-  "Pull-Ups / Assisted Pull-Ups": {
-    setup: ["Full hang; core tight"],
-    exec: ["Pull chest toward bar; elbows down"],
-    focus: ["Full range", "No swing"],
-    mistakes: ["Half reps"],
-    why: ["Lat strength stabilizes shoulder"]
-  },
-  "Standing Overhead Press": {
-    setup: ["Feet hip width; bar at collarbone"],
-    exec: ["Press overhead; head through window"],
-    focus: ["Straight bar path", "Ribs down"],
-    mistakes: ["Overarching back"],
-    why: ["Links leg drive to reach"]
-  },
-  "1-Arm Dumbbell Row": {
-    setup: ["Bench support or hip hinge"],
-    exec: ["Pull DB to hip; pause top"],
-    focus: ["Shoulder down/back"],
-    mistakes: ["Yanking"],
-    why: ["Anti-rotation for plants/landings"]
-  },
-  "Triceps Dips or Pushdowns": {
-    setup: ["Bars or cable"],
-    exec: ["Elbows close; lower controlled"],
-    focus: ["Squeeze lockout"],
-    mistakes: ["Flaring elbows"],
-    why: ["Stronger finish at the rim"]
-  },
-  "Side Plank": {
-    setup: ["Elbow under shoulder; legs stacked"],
-    exec: ["Lift hips; hold line"],
-    focus: ["Hips high"],
-    mistakes: ["Hips dropping"],
-    why: ["Resists side-bend forces on approach"]
-  },
-  "Stability Ball Roll-outs": {
-    setup: ["Kneel; forearms on ball"],
-    exec: ["Roll forward; ribs down"],
-    focus: ["No low-back arch"],
-    mistakes: ["Overreaching"],
-    why: ["Anterior core for hip drive"]
-  },
-  "Bird Dog": {
-    setup: ["Hands under shoulders; knees under hips"],
-    exec: ["Reach opposite arm/leg; brief hold"],
-    focus: ["Hips level"],
-    mistakes: ["Twisting"],
-    why: ["Cross-body stability in approaches"]
-  },
-  "MB Chest Pass": {
-    setup: ["Ball at chest; athletic stance"],
-    exec: ["Explode; straight release"],
-    focus: ["Fast push; follow-through"],
-    mistakes: ["Slow throw"],
-    why: ["Upper power; speeds arm swing"]
-  },
-  "Overhead MB Slam": {
-    setup: ["Ball overhead; ribs down"],
-    exec: ["Slam; use lats and core"],
-    focus: ["Full reach then snap"],
-    mistakes: ["Overarching"],
-    why: ["Triple flexion + trunk snap"]
-  },
-  "Clap or Plyo Push-ups": {
-    setup: ["Push-up position; core tight"],
-    exec: ["Explosive push; hands leave floor"],
-    focus: ["Speed and control"],
-    mistakes: ["Sagging hips"],
-    why: ["Upper-body RFD"]
-  },
-  "Sprint 20 yds": {
-    setup: ["Clear straight line"],
-    exec: ["Accelerate hard; quick turnover"],
-    focus: ["Powerful first steps"],
-    mistakes: ["Overstriding"],
-    why: ["Raises neural drive"]
-  },
-  "Box Jump": {
-    setup: ["Safe height"],
-    exec: ["Load hips; swing arms; jump; land soft"],
-    focus: ["Quiet landings"],
-    mistakes: ["Too high box"],
-    why: ["Rapid force production"]
-  },
-  "Broad Jump": {
-    setup: ["Flat space"],
-    exec: ["Load; jump forward; stick landing"],
-    focus: ["Distance with control"],
-    mistakes: ["Falling forward"],
-    why: ["Horizontal force & hip drive"]
-  },
-  "Lateral Bounds": {
-    setup: ["Stand on one leg"],
-    exec: ["Explode sideways; land opposite leg"],
-    focus: ["Knee alignment"],
-    mistakes: ["Wobbly knee"],
-    why: ["Side-to-side force and control"]
-  },
-  "Depth Drop → Vertical": {
-    setup: ["Low box 12–18 in"],
-    exec: ["Step off; absorb; short contact; jump"],
-    focus: ["Soft land; minimal ground time"],
-    mistakes: ["Too high box"],
-    why: ["Sharpens stretch–shortening cycle"]
-  },
-  "Jump Squat (Bodyweight)": {
-    setup: ["Athletic stance"],
-    exec: ["Quick dip; explode; land soft; reset"],
-    focus: ["Vertical force"],
-    mistakes: ["Too deep"],
-    why: ["Speed of force application"]
-  },
-  "Trap/Barbell Deadlift": {
-    setup: ["Feet hip width; bar over midfoot"],
-    exec: ["Brace; push floor away; stand tall"],
-    focus: ["Neutral spine; bar close"],
-    mistakes: ["Rounding back"],
-    why: ["Total-body force; hip/knee drive"]
-  },
-  "Hip Thrust or Glute Bridge": {
-    setup: ["Shoulders on bench/floor; load at hips"],
-    exec: ["Drive through heels; squeeze top"],
-    focus: ["Posterior tilt; glute squeeze"],
-    mistakes: ["Short range"],
-    why: ["Direct hip extension power"]
-  },
-  "Dunk attempts": {
-    setup: ["Consistent approach"],
-    exec: ["Commit to takeoff; decide early"],
-    focus: ["Confidence; timing"],
-    mistakes: ["Indecision"],
-    why: ["Skill layered on power"]
-  }
-};
-
-/* ---------- Storage Keys ---------- */
-const WEEKS = 12;
-const listKey = "osc_players";
-const key = (p, d, w) => `osc_p${p}_d${d}_w${w}`;
-const settingsKey = (p) => `osc_settings_${p}`;
-const xpKey = (p) => `osc_xp_${p}`;
-const streakKey = (p) => `osc_streak_${p}`;
-const lastKey = (p) => `osc_last_${p}`;
-const earnedKey = (p) => `osc_earned_${p}`;
-
-/* ---------- DOM ---------- */
-const playerSel = document.getElementById("player");
-const daySel = document.getElementById("daySel");
-const weekSel = document.getElementById("weekSel");
-const whyDiv = document.getElementById("why");
-const content = document.getElementById("content");
-const notes = document.getElementById("notes");
-const xpEl = document.getElementById("xp");
-const streakEl = document.getElementById("streak");
-const exportBtn = document.getElementById("exportCsv");
-const xpbar = document.getElementById("xpbar");
-const schoolTag = document.getElementById("schoolTag");
-const sPlayerName = document.getElementById("sPlayerName");
-const sCoachUrl = document.getElementById("sCoachUrl");
-
-/* ---------- Utilities ---------- */
-function loadPlayers() {
-  const raw = localStorage.getItem(listKey);
-  return raw ? JSON.parse(raw) : ["Player 1"];
-}
-function savePlayers(v) {
-  localStorage.setItem(listKey, JSON.stringify(v));
-}
-function loadSettings(p) {
-  return JSON.parse(
-    localStorage.getItem(settingsKey(p)) ||
-      '{"school":"CORE Butte High","mascot":"Lynx","colors":"Blue & White"}'
-  );
-}
-function saveSettings(p, s) {
-  localStorage.setItem(settingsKey(p), JSON.stringify(s));
-}
-function loadEntry(p, d, w) {
-  const raw = localStorage.getItem(key(p, d, w));
-  return raw ? JSON.parse(raw) : null;
-}
-function saveEntry(p, d, w, v) {
-  localStorage.setItem(key(p, d, w), JSON.stringify(v));
-  // Auto sync to coach when available
-  if (CONFIG.coachUrl) {
-    try {
-      fetch(CONFIG.coachUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          player: p,
-          week: w,
-          day: d,
-          xp: getXP(p),
-          streak: getStreak(p),
-          notes: v.notes || "",
-          entry: v,
-          settings: loadSettings(p),
-          ts: new Date().toISOString()
-        })
-      }).catch(() => {});
-    } catch {}
-  }
-}
-function getXP(p) {
-  return +(localStorage.getItem(xpKey(p)) || 0);
-}
-function setXP(p, v) {
-  localStorage.setItem(xpKey(p), v);
-}
-function getStreak(p) {
-  return +(localStorage.getItem(streakKey(p)) || 0);
-}
-function setStreak(p, v) {
-  localStorage.setItem(streakKey(p), v);
-}
-function getLast(p) {
-  return localStorage.getItem(lastKey(p));
-}
-function setLast(p, day) {
-  localStorage.setItem(lastKey(p), day);
-}
-function loadEarned(p) {
-  return JSON.parse(localStorage.getItem(earnedKey(p)) || "{}");
-}
-function saveEarned(p, m) {
-  localStorage.setItem(earnedKey(p), JSON.stringify(m));
-}
-
-/* ---------- UI helpers ---------- */
-function updateXPView(p) {
-  const x = getXP(p);
-  xpEl.textContent = "XP " + x;
-  xpbar.style.width = Math.min(100, x % 100) + "%";
-  const badges = document.getElementById("badges");
-  badges.innerHTML = "";
-  [["Bronze", 100], ["Silver", 300], ["Gold", 600]].forEach(([n, t]) => {
-    const s = document.createElement("span");
-    s.className = "badge";
-    s.textContent = n + (x >= t ? " ✓" : "");
-    badges.appendChild(s);
-  });
-}
-function awardXPOnce(p, id, amt) {
-  const m = loadEarned(p);
-  if (m[id]) return;
-  m[id] = amt;
-  saveEarned(p, m);
-  setXP(p, getXP(p) + amt);
-  updateXPView(p);
-}
-function updateStreak(p) {
-  const today = new Date().toDateString();
-  const last = getLast(p);
-  let s = getStreak(p);
-  if (last !== today) {
-    const y = new Date(Date.now() - 86400000).toDateString();
-    s = last === y ? s + 1 : 1;
-    setStreak(p, s);
-    setLast(p, today);
-  }
-  streakEl.textContent = "Streak " + getStreak(p);
-}
-
-/* ---------- Modal (coach card) ---------- */
-(function ensureModal() {
-  if (document.getElementById("trainerModal")) return;
-  const modal = document.createElement("div");
-  modal.className = "hidden";
-  modal.id = "trainerModal";
-  modal.innerHTML = `
-    <div class="card" style="position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);max-width:720px;width:92%;z-index:2000">
-      <div class="row" style="justify-content:space-between">
-        <strong id="mTitle">Exercise</strong>
-        <button id="mClose">Close</button>
-      </div>
-      <div class="muted">Setup</div><ul id="mSetup"></ul>
-      <div class="muted">Execution</div><ul id="mExec"></ul>
-      <div class="muted">Focus cues</div><ul id="mFocus"></ul>
-      <div class="muted">Common mistakes</div><ul id="mMistakes"></ul>
-      <div class="muted">Why this increases vertical</div><ul id="mWhy"></ul>
-    </div>`;
-  document.body.appendChild(modal);
-  document.getElementById("mClose").onclick = () =>
-    (document.getElementById("trainerModal").className = "hidden");
-  modal.addEventListener("click", (e) => {
-    if (e.target.id === "trainerModal") modal.className = "hidden";
-  });
-})();
-function openTrainer(name) {
-  const d = EX[name];
-  if (!d) return;
-  function fill(arr, id) {
-    const el = document.getElementById(id);
-    el.innerHTML = "";
-    (arr || []).forEach((t) => {
-      const li = document.createElement("li");
-      li.textContent = t;
-      el.appendChild(li);
-    });
-  }
-  document.getElementById("mTitle").textContent = name;
-  fill(d.setup, "mSetup");
-  fill(d.exec, "mExec");
-  fill(d.focus, "mFocus");
-  fill(d.mistakes, "mMistakes");
-  fill(d.why, "mWhy");
-  document.getElementById("trainerModal").className = "";
-}
-
-/* ---------- Render ---------- */
-function initEntry(day) {
-  return {
-    warmup: PROGRAM[day].warmup.map(() => false),
-    strength: PROGRAM[day].strength.map((b) => ({
-      weight: "",
-      notes: "",
-      sets: Array.from({ length: b.sets }, () => ({ done: false }))
-    })),
-    core: PROGRAM[day].core.map(() => false),
-    jump: PROGRAM[day].jump.map(() => false),
-    notes: ""
-  };
-}
-function totalBoxes(d) {
-  let t = 0;
-  t += PROGRAM[d].warmup.length + PROGRAM[d].core.length + PROGRAM[d].jump.length;
-  PROGRAM[d].strength.forEach((blk) => (t += blk.sets));
-  return t;
-}
-function currentDone(data, d) {
-  let c = 0;
-  data.warmup.forEach((x) => x && c++);
-  data.core.forEach((x) => x && c++);
-  data.jump.forEach((x) => x && c++);
-  PROGRAM[d].strength.forEach((blk, i) =>
-    data.strength[i].sets.forEach((s) => s.done && c++)
-  );
-  return c;
-}
-
-function render() {
-  const p = playerSel.value;
-  const d = +daySel.value;
-  const w = +weekSel.value || 1;
-
-  // settings display (locked fields)
-  sPlayerName.value = p;
-
-  const set = loadSettings(p);
-  schoolTag.textContent =
-    (set.school || "School") +
-    " " +
-    (set.mascot || "Mascot") +
-    " | " +
-    (set.colors || "");
-
-  const data = loadEntry(p, d, w) || initEntry(d);
-  updateXPView(p);
-  updateStreak(p);
-
-  // Why
-  whyDiv.innerHTML = PROGRAM[d].why.map((t) => `<div class="muted">• ${t}</div>`).join("");
-
-  // Content
-  content.innerHTML = "";
-
-  // Warmup
-  const warm = document.createElement("div");
-  warm.className = "card";
-  warm.innerHTML = "<strong>Warm-Up</strong>";
-  PROGRAM[d].warmup.forEach((it, idx) => {
-    const row = document.createElement("div");
-    row.className = "row";
-    const id = `wu_${d}_${idx}`;
-    const cb = document.createElement("input");
-    cb.type = "checkbox";
-    cb.checked = data.warmup[idx];
-    cb.onchange = () => {
-      data.warmup[idx] = cb.checked;
-      saveEntry(p, d, w, data);
-      if (cb.checked) {
-        awardXPOnce(p, id, 5);
-        updateStreak(p);
-      }
-      render(); // refresh progress
-    };
-    const link = document.createElement("span");
-    link.className = "exercise-link";
-    link.textContent = " " + it;
-    link.onclick = () => openTrainer(it.split(" — ")[0]);
-    row.appendChild(cb);
-    row.appendChild(link);
-    warm.appendChild(row);
-  });
-  content.appendChild(warm);
-
-  // Strength
-  const str = document.createElement("div");
-  str.className = "card";
-  str.innerHTML =
-    "<strong>Strength</strong><div class='grid gridHeader'><div>Exercise</div><div>Sets</div><div>Reps</div><div>Weight / Notes</div></div>";
-  PROGRAM[d].strength.forEach((blk, bi) => {
-    const g = document.createElement("div");
-    g.className = "grid";
-    const link = document.createElement("span");
-    link.className = "exercise-link";
-    link.textContent = blk.ex;
-    link.onclick = () => openTrainer(blk.ex);
-    const c1 = document.createElement("div");
-    c1.appendChild(link);
-    g.appendChild(c1);
-
-    const c2 = document.createElement("div");
-    c2.textContent = blk.sets;
-    g.appendChild(c2);
-
-    const c3 = document.createElement("div");
-    c3.textContent = blk.reps;
-    g.appendChild(c3);
-
-    const c4 = document.createElement("div");
-    const winput = document.createElement("input");
-    winput.placeholder = "lb";
-    winput.style.width = "100%";
-    winput.value = data.strength[bi].weight || "";
-    const tarea = document.createElement("textarea");
-    tarea.className = "note";
-    tarea.placeholder = "Notes";
-    tarea.value = data.strength[bi].notes || "";
-    winput.oninput = () => {
-      data.strength[bi].weight = winput.value;
-      saveEntry(p, d, w, data);
-    };
-    tarea.oninput = () => {
-      data.strength[bi].notes = tarea.value;
-      saveEntry(p, d, w, data);
-    };
-    c4.appendChild(winput);
-    c4.appendChild(tarea);
-    g.appendChild(c4);
-    str.appendChild(g);
-
-    const setRow = document.createElement("div");
-    setRow.className = "row";
-    setRow.style.marginTop = "6px";
-    for (let s = 0; s < blk.sets; s++) {
-      const lb = document.createElement("label");
-      lb.className = "row";
-      const cb = document.createElement("input");
-      cb.type = "checkbox";
-      cb.checked = data.strength[bi].sets[s].done;
-      const id = `st_${d}_${bi}_${s}`;
-      cb.onchange = () => {
-        data.strength[bi].sets[s].done = cb.checked;
-        saveEntry(p, d, w, data);
-        if (cb.checked) {
-          awardXPOnce(p, id, 10);
-          updateStreak(p);
-        }
-        render();
-      };
-      lb.appendChild(cb);
-      lb.append(" Set " + (s + 1));
-      setRow.appendChild(lb);
-    }
-    str.appendChild(setRow);
-  });
-  content.appendChild(str);
-
-  // Core
-  const core = document.createElement("div");
-  core.className = "card";
-  core.innerHTML = "<strong>Core</strong>";
-  PROGRAM[d].core.forEach((it, idx) => {
-    const row = document.createElement("div");
-    row.className = "row";
-    const id = `co_${d}_${idx}`;
-    const cb = document.createElement("input");
-    cb.type = "checkbox";
-    cb.checked = data.core[idx];
-    cb.onchange = () => {
-      data.core[idx] = cb.checked;
-      saveEntry(p, d, w, data);
-      if (cb.checked) {
-        awardXPOnce(p, id, 5);
-        updateStreak(p);
-      }
-      render();
-    };
-    const link = document.createElement("span");
-    link.className = "exercise-link";
-    link.textContent = " " + it;
-    link.onclick = () => openTrainer(it.split(" — ")[0]);
-    row.appendChild(cb);
-    row.appendChild(link);
-    core.appendChild(row);
-  });
-  content.appendChild(core);
-
-  // Jump
-  const jump = document.createElement("div");
-  jump.className = "card";
-  jump.innerHTML = "<strong>Jump Mechanics</strong>";
-  PROGRAM[d].jump.forEach((it, idx) => {
-    const row = document.createElement("div");
-    row.className = "row";
-    const id = `jm_${d}_${idx}`;
-    const cb = document.createElement("input");
-    cb.type = "checkbox";
-    cb.checked = data.jump[idx];
-    cb.onchange = () => {
-      data.jump[idx] = cb.checked;
-      saveEntry(p, d, w, data);
-      if (cb.checked) {
-        awardXPOnce(p, id, 8);
-        updateStreak(p);
-      }
-      render();
-    };
-    const link = document.createElement("span");
-    link.className = "exercise-link";
-    link.textContent = " " + it;
-    link.onclick = () => openTrainer(it.split(" — ")[0]);
-    row.appendChild(cb);
-    row.appendChild(link);
-    jump.appendChild(row);
-  });
-  content.appendChild(jump);
-
-  // Notes
-  notes.value = data.notes || "";
-  notes.oninput = () => {
-    data.notes = notes.value;
-    saveEntry(p, d, w, data);
-  };
-}
-
-/* ---------- Player + Week init ---------- */
-function refreshPlayers() {
-  playerSel.innerHTML = "";
-  loadPlayers().forEach((n) => {
-    const o = document.createElement("option");
-    o.value = n;
-    o.textContent = n;
-    playerSel.appendChild(o);
-  });
-}
-for (let w = 1; w <= WEEKS; w++) {
-  const o = document.createElement("option");
-  o.value = w;
-  o.textContent = "Week " + w;
-  weekSel.appendChild(o);
-}
-
-/* ---------- Events ---------- */
-playerSel.onchange = render;
-daySel.onchange = render;
-weekSel.onchange = render;
-document.getElementById("fabSettings").onclick = openSettings;
-function openSettings() {
-  const box = document.getElementById("settings");
-  box.classList.toggle("hidden");
-}
-exportBtn.onclick = () => {
-  const p = playerSel.value,
-    d = +daySel.value,
-    w = +weekSel.value;
-  const e = loadEntry(p, d, w) || initEntry(d);
-  const rows = [
-    [
-      "Player",
-      "Week",
-      "Day",
-      "Section",
-      "Item",
-      "Set",
-      "Done",
-      "Weight",
-      "Notes",
-      "XP",
-      "Streak",
-      "School",
-      "Mascot",
-      "Colors"
-    ]
-  ];
-  const set = loadSettings(p);
-  PROGRAM[d].warmup.forEach((it, i) =>
-    rows.push([
-      p,
-      w,
-      d,
-      "Warmup",
-      it,
-      "",
-      e.warmup[i] ? "yes" : "",
-      "",
-      "",
-      getXP(p),
-      getStreak(p),
-      set.school || "",
-      set.mascot || "",
-      set.colors || ""
-    ])
-  );
-  PROGRAM[d].strength.forEach((blk, i) => {
-    const ex = blk.ex;
-    e.strength[i].sets.forEach((st, si) =>
-      rows.push([
-        p,
-        w,
-        d,
-        "Strength",
-        ex,
-        si + 1,
-        st.done ? "yes" : "",
-        e.strength[i].weight || "",
-        e.strength[i].notes || "",
-        getXP(p),
-        getStreak(p),
-        set.school || "",
-        set.mascot || "",
-        set.colors || ""
-      ])
-    );
-  });
-  PROGRAM[d].core.forEach((it, i) =>
-    rows.push([
-      p,
-      w,
-      d,
-      "Core",
-      it,
-      "",
-      e.core[i] ? "yes" : "",
-      "",
-      "",
-      getXP(p),
-      getStreak(p),
-      set.school || "",
-      set.mascot || "",
-      set.colors || ""
-    ])
-  );
-  PROGRAM[d].jump.forEach((it, i) =>
-    rows.push([
-      p,
-      w,
-      d,
-      "Jump",
-      it,
-      "",
-      e.jump[i] ? "yes" : "",
-      "",
-      "",
-      getXP(p),
-      getStreak(p),
-      set.school || "",
-      set.mascot || "",
-      set.colors || ""
-    ])
-  );
-  const csv = rows
-    .map((r) => r.map((x) => `"${(x ?? "").toString().replace(/"/g, '""')}"`).join(","))
-    .join("\n");
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-  a.download = `OSC_${p}_w${w}_d${d}.csv`;
-  a.click();
-};
-
-/* ---------- First Run ---------- */
-(function firstRun() {
-  refreshPlayers();
-  playerSel.value = loadPlayers()[0];
-  if (!weekSel.value) weekSel.value = 1;
-  // Lock player rename (we only display it)
-  sPlayerName.disabled = true;
-  sCoachUrl.disabled = true;
-  render();
-})();
-</script>
 <div class="wrap">
   <header class="row">
-    <h1>Operation Sky Core — Player <span class="small">v3.4.1</span></h1>
+    <h1>Operation Sky Core — <span id="phaseLabel">Phase 1</span> <span class="small" id="ver">(Player v3.4.2)</span></h1>
     <div class="row">
-      <select id="player" title="Player"></select>
-      <select id="daySel" title="Day">
-        <option value="1">Day 1</option>
-        <option value="2">Day 2</option>
-        <option value="3">Day 3</option>
-      </select>
-      <select id="weekSel" title="Week"></select>
-      <button id="exportCsv" title="Export CSV">Export</button>
-      <button id="fabSettings" title="Settings">Settings</button>
+      <select id="player"></select><button id="addPlayer">+ Player</button>
+      <select id="daySel"><option value="1">Day 1</option><option value="2">Day 2</option><option value="3">Day 3</option></select>
+      <select id="week"></select>
+      <button id="exportCsv">Export</button>
     </div>
   </header>
 
   <div class="row" id="hdr">
-    <span class="chip lynx" id="schoolTag">CORE Butte High Lynx | Blue &amp; White</span>
-    <span class="chip" id="xp">XP 0</span>
-    <span class="chip" id="streak">Streak 0</span>
+    <span class="chip lynx" id="schoolTag">CORE Butte High Lynx | Blue & White</span>
+    <span class="chip" id="xp">XP 0</span><span class="chip" id="streak">Streak 0</span>
     <div class="badges" id="badges" title="Bronze=100 XP, Silver=300 XP, Gold=600 XP"></div>
   </div>
 
   <div class="card">
     <strong>Progress</strong>
     <div class="row small" style="gap:12px;margin-top:6px">
+      <span style="width:120px">Today's completion</span>
+      <div class="progress"><div id="daybar"></div></div>
+    </div>
+    <div class="row small" style="gap:12px;margin-top:6px">
       <span style="width:120px">XP level</span>
-      <div class="progress" style="flex:1"><div id="xpbar" style="width:0%"></div></div>
+      <div class="progress"><div id="xpbar"></div></div>
     </div>
   </div>
 
-  <div class="card">
+  <div class="card outline">
     <strong>Why today matters</strong>
-    <div id="why"></div>
+    <div id="why" style="margin-top:6px"></div>
   </div>
 
   <div id="content"></div>
 
-  <div class="card">
-    <strong>Notes</strong>
+  <div class="card outline"><strong>Notes</strong>
     <textarea id="notes" class="note" placeholder="Notes for today..."></textarea>
   </div>
 </div>
 
-<!-- Settings drawer (view-only for player) -->
-<div class="wrap card hidden" id="settings" style="max-width:980px">
-  <strong>Settings</strong>
-  <div class="row small" style="margin-top:6px;color:var(--muted)">
-    Player cannot change name or sync URL here. These are managed by the coach.
-  </div>
-  <div class="row" style="margin-top:8px;flex-wrap:wrap;gap:8px">
-    <div style="flex:1;min-width:220px">
-      <label class="small muted">Player name</label>
-      <input id="sPlayerName" disabled>
-    </div>
-    <div style="flex:1;min-width:220px">
-      <label class="small muted">Coach Sync URL</label>
-      <input id="sCoachUrl" disabled value="(not set)">
+<!-- Coach Card Modal -->
+<div class="modal" id="trainerModal">
+  <div class="box">
+    <header class="row"><h3 id="mTitle">Exercise</h3><button class="close" id="mClose">Close</button></header>
+    <div class="content">
+      <div class="muted">Setup</div><ul id="mSetup"></ul>
+      <div class="muted">Execution</div><ul id="mExec"></ul>
+      <div class="muted">Focus cues</div><ul id="mFocus"></ul>
+      <div class="muted">Common mistakes</div><ul id="mMistakes"></ul>
+      <div class="muted">Why this increases vertical</div><ul id="mWhy"></ul>
     </div>
   </div>
 </div>
+
+<script>
+// PWA cache (no-op if not supported)
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+
+/* ---------------- PROGRAM ---------------- */
+const PROGRAM={
+  1:{label:"Day 1 — Lower Body + Jump",
+     why:["Heavy basics raise leg drive and stable landings.","Strong positions protect knees and back."],
+     warmup:["Leg Swings — 10 each","Walking Lunges — 10 each","Bodyweight Squat — 3×10","Standing Calf Raise — 3×10","Light Jumps — 3×5"],
+     strength:[{ex:"Back or Goblet Squat",sets:4,reps:"6–8",weighted:true},
+               {ex:"Romanian Deadlift",sets:3,reps:"8–10",weighted:true},
+               {ex:"Walking Lunges",sets:3,reps:"10 each",weighted:true},
+               {ex:"Bulgarian Split Squat",sets:3,reps:"8 each",weighted:true},
+               {ex:"Standing Calf Raise (Loaded)",sets:4,reps:"12–15",weighted:true}],
+     core:["Hanging Knee Raise — 3×10","Plank — 3×30–45s"],
+     jump:["Two-step approach jumps — 5","Touch rim/backboard — 3×5","Form jumps — 3×10"]},
+
+  2:{label:"Day 2 — Upper Body + Core",
+     why:["Stronger torso keeps power from leaking.","Arm swing speed adds inches to reach."],
+     warmup:["Arm Circles — 15/15","Band Pull-Apart — 15","Push-up to Down Dog — 8","Shoulder Taps — 10/side","Jumping Jacks — 30s"],
+     strength:[{ex:"Barbell or DB Bench Press",sets:4,reps:"6–8",weighted:true},
+               {ex:"Pull-Ups / Assisted Pull-Ups",sets:3,reps:"6–10",weighted:false},
+               {ex:"Standing Overhead Press",sets:3,reps:"8",weighted:true},
+               {ex:"1-Arm Dumbbell Row",sets:3,reps:"10 each",weighted:true},
+               {ex:"Triceps Dips or Pushdowns",sets:3,reps:"12–15",weighted:false}],
+     core:["Hanging Leg Raise — 3×10","Side Plank — 3×30s each","Stability Ball Roll-outs — 3×12","Bird Dog — 3×10 each"],
+     jump:["MB Chest Pass — 3×10","Overhead MB Slam — 3×10","Clap or Plyo Push-ups — 3×6","Sprint 20 yds × 6"]},
+
+  3:{label:"Day 3 — Plyos + Practice",
+     why:["Fast contacts train spring.","Approach jumps wire skill to power."],
+     warmup:["Dynamic Skips — 2×20 yds","A-Skips & High Knees — 20 yds each","Light Bounding — 2×10","Submax Jumps — 3 at 50–70%"],
+     strength:[{ex:"Box Jump",sets:4,reps:"5",weighted:false},
+               {ex:"Broad Jump",sets:4,reps:"5",weighted:false},
+               {ex:"Lateral Bounds",sets:3,reps:"6 each",weighted:false},
+               {ex:"Depth Drop → Vertical",sets:3,reps:"5",weighted:false},
+               {ex:"Jump Squat (Bodyweight)",sets:3,reps:"8",weighted:false}],
+     core:["Trap/Barbell Deadlift — 4×5","Hip Thrust or Glute Bridge — 3×10"],
+     jump:["Two-step approach jumps — 8","Touch rim/backboard — 3×5","Dunk attempts — 5–10"]}
+};
+
+/* ---------------- WHY (unique per week/day) ---------------- */
+const WHY = {
+  1:{1:"Week 1 • Day 1: Lay the foundation. Clean patterns now make every pound you add later translate to inches.",
+     2:"Week 1 • Day 2: Strong shoulders and lats protect landings and add arm-swing speed.",
+     3:"Week 1 • Day 3: Light contacts teach spring without wear."},
+  2:{1:"Week 2 • Day 1: Small load bumps, same perfect depth and quiet landings.",
+     2:"Week 2 • Day 2: Press–pull balance for stable posture.",
+     3:"Week 2 • Day 3: Quicker ground contact beats height."},
+  3:{1:"Week 3 • Day 1: Heavier basics wire force into stable knees/hips.",
+     2:"Week 3 • Day 2: Bar speed over grind.",
+     3:"Week 3 • Day 3: Bounding builds approach rhythm."},
+  4:{1:"Week 4 • Day 1: Single-leg strength feeds your plant.",
+     2:"Week 4 • Day 2: Overhead ties ribs to pelvis for transfer.",
+     3:"Week 4 • Day 3: Depth drops sharpen SSC timing."},
+  5:{1:"Week 5 • Day 1: Push intensity, keep form pristine.",
+     2:"Week 5 • Day 2: Lats keep shoulders honest for pressing.",
+     3:"Week 5 • Day 3: Same steps, same rhythm, repeatable power."},
+  6:{1:"Week 6 • Day 1: Last foundation exposures—quality now pays later.",
+     2:"Week 6 • Day 2: Posture + speed = safe gains.",
+     3:"Week 6 • Day 3: Quiet feet today, louder rim tomorrow."},
+  7:{1:"Week 7 • Day 1: Phase 2—fronts + crisp hinges for vertical force.",
+     2:"Week 7 • Day 2: Fewer reps, faster reps.",
+     3:"Week 7 • Day 3: Depth→vertical = stiff, springy contacts."},
+  8:{1:"Week 8 • Day 1: Heels-elevated squats push quad drive.",
+     2:"Week 8 • Day 2: Rows/dips reinforce finish and mid-back.",
+     3:"Week 8 • Day 3: Win with speed and landings, not box height."},
+  9:{1:"Week 9 • Day 1: Split-squat power balances your plant sides.",
+     2:"Week 9 • Day 2: Ribs down, elbows under—clean force path.",
+     3:"Week 9 • Day 3: Broad jumps tune first-step force."},
+ 10:{1:"Week 10 • Day 1: Peak strength only matters with mechanics.",
+     2:"Week 10 • Day 2: Stop sets when speed drops.",
+     3:"Week 10 • Day 3: Lateral bounds enforce knee control."},
+ 11:{1:"Week 11 • Day 1: Keep sub-max jumps between heavy sets.",
+     2:"Week 11 • Day 2: Press with intent, pull with control.",
+     3:"Week 11 • Day 3: Rhythm + timing = inches."},
+ 12:{1:"Week 12 • Day 1: Final heavy exposures—leave 1–2 reps in tank.",
+     2:"Week 12 • Day 2: Upper-power prime for testing.",
+     3:"Week 12 • Day 3: Peak week—jump fresh, land soft, measure up."}
+};
+
+/* ---------------- COACH CARDS (EX) ---------------- */
+const EX={
+ "Leg Swings":{"setup":["Hold wall or rack for balance","Stand tall; brace lightly"],
+   "exec":["Swing forward/back 10–15 reps","Then side-to-side 10–15 reps"],
+   "focus":["Smooth rhythm","Do not force range"],"mistakes":["Wild swings","Torso twisting"],
+   "why":["Lubricates hips; primes for jumping"]},
+ "Walking Lunges":{"setup":["Optional light DBs at sides","Tall posture"],
+   "exec":["Step forward; lower till back knee hovers","Push through front heel to stand"],
+   "focus":["Even steps; knee over mid-foot"],"mistakes":["Short steps","Torso collapse"],
+   "why":["Single-leg strength & balance for a stable plant"]},
+ "Bodyweight Squat":{"setup":["Feet shoulder width; toes slightly out"],
+   "exec":["Sit between heels; chest proud; stand tall"],
+   "focus":["Knees over toes","Heels down"],
+   "mistakes":["Knees cave","Rounding back"],"why":["Grooves safe loading pattern"]},
+ "Standing Calf Raise":{"setup":["Feet shoulder width; neutral pelvis"],
+   "exec":["Rise tall, pause 1s; lower 2–3s"],
+   "focus":["Full range","Even forefoot pressure"],
+   "mistakes":["Half reps","Ankles rolling"],"why":["Ankle stiffness & elastic recoil"]},
+ "Light Jumps":{"setup":["Athletic stance"],
+   "exec":["Quick dip; small jump; land soft; reset"],
+   "focus":["Quiet feet","Mechanics over height"],
+   "mistakes":["Stomping","Knees collapsing"],"why":["Primes nervous system without fatigue"]},
+
+ "Back or Goblet Squat":{"setup":["Brace core; bar on traps or DB at chest"],
+   "exec":["Lower 2–3s; explode up; heels down"],
+   "focus":["Depth you control","Brace hard"],
+   "mistakes":["Heels up","Knees cave"],"why":["Raises leg force for takeoff"]},
+ "Romanian Deadlift":{"setup":["Hip-width; soft knees; lats tight"],
+   "exec":["Hips back; bar close; stand by squeezing glutes"],
+   "focus":["Neutral spine","Close bar path"],
+   "mistakes":["Locked knees","Bar drifts"],"why":["Glute/ham drive adds inches"]},
+ "Bulgarian Split Squat":{"setup":["Rear foot on bench; front foot forward"],
+   "exec":["Lower straight down; slight forward torso; drive through heel"],
+   "focus":["Front leg does the work","Knee over toes"],
+   "mistakes":["Pushing off back leg"],"why":["Unilateral force in jump positions"]},
+ "Standing Calf Raise (Loaded)":{"setup":["Smith/machine or DBs"],
+   "exec":["Full rise with 1s pause; slow 2–3s lower"],
+   "focus":["No bouncing","Stay tall"],
+   "mistakes":["Half reps","Leaning"],"why":["Plantarflexor strength for takeoff"]},
+
+ "Hanging Knee Raise":{"setup":["Hang; ribs down"],
+   "exec":["Lift knees to hip height; no swing"],
+   "focus":["Control; exhale on lift"],"mistakes":["Swinging"],
+   "why":["Trunk control for power transfer"]},
+ "Plank":{"setup":["Elbows under shoulders; straight line"],
+   "exec":["Brace glutes/abs; breathe behind brace"],
+   "focus":["Neutral spine"],"mistakes":["Sagging hips"],
+   "why":["Rigid torso to transmit leg power"]},
+
+ "Two-step approach jumps":{"setup":["Short two-step run-up"],
+   "exec":["Quick plant; load; full arm swing; explode"],
+   "focus":["Timing the plant","Fast transition"],
+   "mistakes":["Choppy steps"],"why":["Game-rhythm & elastic timing"]},
+ "Form jumps":{"setup":["Feet under shoulders"],
+   "exec":["Jump straight up; land soft; reset"],
+   "focus":["Quiet feet","Knees track over toes"],
+   "mistakes":["Stomping"],"why":["Perfect pattern & landing control"]},
+ "Touch rim/backboard":{"setup":["Same approach each rep"],
+   "exec":["Reach tall at peak; stick the landing"],
+   "focus":["Consistency","Full extension"],
+   "mistakes":["Changing rhythm"],"why":["Measurable target; reach timing"]},
+
+ /* Day 2 warm-up */
+ "Arm Circles":{"setup":["Stand tall; arms out"],"exec":["Small circles 15–30s fwd/back"],
+   "focus":["Shoulders down/back","Smooth rhythm"],"mistakes":["Shrugging","Arching back"],
+   "why":["Warms shoulder joint"]},
+ "Band Pull-Apart":{"setup":["Light band at chest height"],
+   "exec":["Pull apart by squeezing shoulder blades"],
+   "focus":["Elbows soft","Neck relaxed"],"mistakes":["Shrugging","Rib flare"],
+   "why":["Activates mid-back for posture & shoulder health"]},
+ "Push-up to Down Dog":{"setup":["High plank"],
+   "exec":["Lower to push-up, then shift hips back to Down Dog"],
+   "focus":["Strong core","Full scapular movement"],"mistakes":["Sagging hips"],
+   "why":["Warms shoulders, core, posterior chain"]},
+ "Shoulder Taps":{"setup":["High plank, feet hip-width"],
+   "exec":["Tap opposite shoulder, alternate"],
+   "focus":["Hips stable"],"mistakes":["Swaying hips"],
+   "why":["Anti-rotation core & shoulder stability"]},
+ "Jumping Jacks":{"setup":["Stand tall"],
+   "exec":["Jump feet out while raising arms overhead; return"],
+   "focus":["Relaxed rhythm"],"mistakes":["Locked knees"],
+   "why":["Elevates HR; full-body warm-up"]},
+
+ /* Day 2 strength */
+ "Barbell or DB Bench Press":{"setup":["Feet planted; shoulders back"],
+   "exec":["Lower to mid-chest; elbows ~45°; press over shoulders"],
+   "focus":["Stable base","Explosive press"],"mistakes":["Flaring elbows"],
+   "why":["Faster arm swing & stronger finish"]},
+ "Pull-Ups / Assisted Pull-Ups":{"setup":["Full hang; core tight"],
+   "exec":["Pull chest toward bar; elbows down"],
+   "focus":["Full range","No swing"],"mistakes":["Half reps"],
+   "why":["Lat strength stabilizes shoulder"]},
+ "Standing Overhead Press":{"setup":["Feet hip width; bar at collarbone"],
+   "exec":["Press overhead; head through window"],
+   "focus":["Straight bar path","Ribs down"],"mistakes":["Overarching back"],
+   "why":["Links leg drive to reach through rigid trunk"]},
+ "1-Arm Dumbbell Row":{"setup":["Hand/knee on bench or hinge"],
+   "exec":["Pull DB toward hip; pause top"],
+   "focus":["Shoulder down/back"],"mistakes":["Yanking"],
+   "why":["Anti-rotation for stable plants/landings"]},
+ "Triceps Dips or Pushdowns":{"setup":["Parallel bars or cable"],
+   "exec":["Elbows close; lower controlled"],
+   "focus":["Squeeze lockout"],"mistakes":["Flaring elbows"],
+   "why":["Stronger finish at rim"]},
+
+ /* Day 2 core extra */
+ "Hanging Leg Raise":{"setup":["Hang; ribs down"],
+   "exec":["Raise straight legs to hip height or higher without swing"],
+   "focus":["Control & exhale"],"mistakes":["Swinging","Arching back"],
+   "why":["Anterior core strength for power transfer"]},
+ "Side Plank":{"setup":["Elbow under shoulder; legs stacked"],
+   "exec":["Lift hips; hold straight line"],
+   "focus":["Hips high"],"mistakes":["Hips dropping"],
+   "why":["Resists side-bend forces on approach"]},
+ "Stability Ball Roll-outs":{"setup":["Kneel; forearms on ball"],
+   "exec":["Roll forward keeping ribs down"],
+   "focus":["No low-back arch"],"mistakes":["Overreaching"],
+   "why":["Anterior core strength for hip drive"]},
+ "Bird Dog":{"setup":["Hands under shoulders; knees under hips"],
+   "exec":["Reach opposite arm/leg; brief hold"],
+   "focus":["Hips level"],"mistakes":["Twisting"],
+   "why":["Cross-body stability used in approach steps"]},
+
+ /* Day 2 jump */
+ "MB Chest Pass":{"setup":["Ball at chest; athletic stance"],
+   "exec":["Explode forward; release straight ahead"],
+   "focus":["Fast push; follow-through"],"mistakes":["Slow throw"],
+   "why":["Upper power; speeds arm swing"]},
+ "Overhead MB Slam":{"setup":["Ball overhead; ribs down"],
+   "exec":["Slam; use lats and core"],
+   "focus":["Full reach then snap"],"mistakes":["Overarching"],
+   "why":["Triple flexion and trunk snap"]},
+ "Clap or Plyo Push-ups":{"setup":["Push-up position; core tight"],
+   "exec":["Explosive push; hands leave floor"],
+   "focus":["Speed & control"],"mistakes":["Sagging hips"],
+   "why":["Upper-body RFD to match leg power"]},
+ "Sprint 20 yds":{"setup":["Clear straight line"],
+   "exec":["Accelerate hard; quick turnover"],
+   "focus":["Powerful first steps"],"mistakes":["Overstriding"],
+   "why":["Raises neural drive for approaches"]},
+
+ /* Day 3 warm-up */
+ "Dynamic Skips":{"setup":["Open lane or court"],
+   "exec":["Skip with knee drive & opposite arm swing"],
+   "focus":["Tall posture","Rhythmic contacts"],"mistakes":["Slouching"],
+   "why":["Coordinates hip drive & arm action"]},
+ "A-Skips":{"setup":["Mark a straight line"],
+   "exec":["Drive knee up; strike under hips; alternate"],
+   "focus":["Dorsiflexed ankle","Quick contacts"],"mistakes":["Overstriding"],
+   "why":["Sprint mechanics for approach steps"]},
+ "High Knees":{"setup":["Athletic posture"],
+   "exec":["Run in place bringing knees to hip height"],
+   "focus":["Quick feet","Arm swing"],"mistakes":["Leaning back"],
+   "why":["Increases cadence & hip flexor activation"]},
+ "Light Bounding":{"setup":["Short distance"],
+   "exec":["Easy bounds focusing on foot placement"],
+   "focus":["Quiet landings"],"mistakes":["Heavy contacts"],
+   "why":["Priming without fatigue"]},
+ "Submax Jumps":{"setup":["Athletic stance"],
+   "exec":["Jumps at 50–70% effort; stick landings"],
+   "focus":["Mechanics over height"],"mistakes":["Hard landings"],
+   "why":["Nervous system prep without fatigue"]},
+
+ /* Day 3 strength & core */
+ "Box Jump":{"setup":["Safe height; step away"],
+   "exec":["Load hips; swing arms; jump; land soft"],
+   "focus":["Quiet landings"],"mistakes":["Too high box"],
+   "why":["Rapid force production"]},
+ "Broad Jump":{"setup":["Flat space"],
+   "exec":["Load; jump forward; stick landing"],
+   "focus":["Distance with control"],"mistakes":["Falling forward"],
+   "why":["Horizontal force & hip drive"]},
+ "Lateral Bounds":{"setup":["Stand on one leg"],
+   "exec":["Explode sideways; land on the other leg"],
+   "focus":["Knee alignment"],"mistakes":["Wobbly knee"],
+   "why":["Side-to-side force & single-leg control"]},
+ "Depth Drop → Vertical":{"setup":["Low box 12–18 in"],
+   "exec":["Step off; absorb; short contact; jump up"],
+   "focus":["Soft land; minimal ground time"],"mistakes":["Too high box"],
+   "why":["Sharpens stretch–shortening cycle"]},
+ "Jump Squat (Bodyweight)":{"setup":["Athletic stance"],
+   "exec":["Quick dip; explode; land soft; reset"],
+   "focus":["Vertical force"],"mistakes":["Too deep"],
+   "why":["Speed of force application"]},
+ "Trap/Barbell Deadlift":{"setup":["Feet hip width; bar over midfoot"],
+   "exec":["Brace; push floor; stand tall"],
+   "focus":["Neutral spine; bar close"],"mistakes":["Rounding back"],
+   "why":["Total-body force; hip/knee drive"]},
+ "Hip Thrust or Glute Bridge":{"setup":["Shoulders on bench/floor; load at hips"],
+   "exec":["Drive through heels; squeeze top"],
+   "focus":["Posterior tilt; glute squeeze"],"mistakes":["Short range"],
+   "why":["Direct hip extension power"]},
+ "Dunk attempts":{"setup":["Same approach each rep"],
+   "exec":["Commit to takeoff; decide early"],
+   "focus":["Confidence; timing"],"mistakes":["Indecision"],
+   "why":["Skill layered on power"]}
+};
+
+/* ---------- Alias resolver so every label opens a card ---------- */
+const EX_ALIASES = {
+  "A-Skips & High Knees":"A-Skips",
+  "Depth Drop -> Vertical":"Depth Drop → Vertical",
+  "Depth Drop → Vertical":"Depth Drop → Vertical",
+  "Clap or Plyo Push-ups":"Clap or Plyo Push-ups",
+  "Trap/Barbell Deadlift":"Trap/Barbell Deadlift",
+  "Hip Thrust or Glute Bridge":"Hip Thrust or Glute Bridge",
+  "Two-step approach jumps":"Two-step approach jumps",
+  "Touch rim/backboard":"Touch rim/backboard",
+  "Standing Calf Raise":"Standing Calf Raise",
+  "Stability Ball Roll-outs":"Stability Ball Roll-outs",
+  "MB Chest Pass":"MB Chest Pass",
+  "Overhead MB Slam":"Overhead MB Slam",
+  "Jump Squat (Bodyweight)":"Jump Squat (Bodyweight)",
+  "Light Bounding":"Light Bounding",
+  "Submax Jumps":"Submax Jumps"
+};
+function baseName(label){
+  // Strip reps after em dash or " x "
+  let b = label.split(" — ")[0].split(" × ")[0].trim();
+  // Map aliases
+  if(EX_ALIASES[b]) return EX_ALIASES[b];
+  return b;
+}
+
+/* ---------------- Storage helpers ---------------- */
+const WEEKS=12;
+const listKey="osc_players"; const key=(p,d,w)=>`osc_p${p}_d${d}_w${w}`;
+const settingsKey=(p)=>`osc_settings_${p}`;
+const xpKey=(p)=>`osc_xp_${p}`; const streakKey=(p)=>`osc_streak_${p}`;
+const lastKey=(p)=>`osc_last_${p}`; const earnedKey=(p)=>`osc_earned_${p}`;
+
+function loadPlayers(){ const raw=localStorage.getItem(listKey); return raw?JSON.parse(raw):["Sam"]; }
+function savePlayers(v){ localStorage.setItem(listKey, JSON.stringify(v)); }
+function loadSettings(p){ return JSON.parse(localStorage.getItem(settingsKey(p))||'{"school":"CORE Butte High","mascot":"Lynx","colors":"Blue & White"}'); }
+function saveSettings(p,s){ localStorage.setItem(settingsKey(p), JSON.stringify(s)); }
+function loadEntry(p,d,w){ const raw=localStorage.getItem(key(p,d,w)); return raw?JSON.parse(raw):null; }
+function saveEntry(p,d,w,val){ localStorage.setItem(key(p,d,w), JSON.stringify(val)); }
+function getXP(p){ return +(localStorage.getItem(xpKey(p))||0); }
+function setXP(p,v){ localStorage.setItem(xpKey(p), v); }
+function getStreak(p){ return +(localStorage.getItem(streakKey(p))||0); }
+function setStreak(p,v){ localStorage.setItem(streakKey(p), v); }
+function getLast(p){ return localStorage.getItem(lastKey(p)); }
+function setLast(p,day){ localStorage.setItem(lastKey(p), day); }
+function loadEarned(p){ return JSON.parse(localStorage.getItem(earnedKey(p))||'{}'); }
+function saveEarned(p,m){ localStorage.setItem(earnedKey(p), JSON.stringify(m)); }
+
+/* ---------------- DOM refs ---------------- */
+const playerSel=document.getElementById('player');
+const addPlayerBtn=document.getElementById('addPlayer');
+const daySel=document.getElementById('daySel');
+const weekSel=document.getElementById('week');
+const whyDiv=document.getElementById('why');
+const content=document.getElementById('content');
+const notes=document.getElementById('notes');
+const xpEl=document.getElementById('xp');
+const streakEl=document.getElementById('streak');
+const exportBtn=document.getElementById('exportCsv');
+const xpbar=document.getElementById('xpbar');
+const daybar=document.getElementById('daybar');
+const badges=document.getElementById('badges');
+const phaseLabel=document.getElementById('phaseLabel');
+
+/* ---------------- Populate week dropdown (once) ---------------- */
+for(let w=1; w<=WEEKS; w++){ const o=document.createElement('option'); o.value=w; o.textContent="Week "+w; weekSel.appendChild(o); }
+
+/* ---------------- Players ---------------- */
+function refreshPlayers(){
+  playerSel.innerHTML='';
+  loadPlayers().forEach(n=>{ const o=document.createElement('option'); o.value=n; o.textContent=n; playerSel.appendChild(o); });
+}
+refreshPlayers(); playerSel.value = loadPlayers()[0];
+
+addPlayerBtn.onclick=()=>{ const n=prompt("Player name"); if(!n) return;
+  const list=loadPlayers(); if(!list.includes(n)){ list.push(n); savePlayers(list); refreshPlayers(); playerSel.value=n; render(); } };
+
+playerSel.onchange=render; daySel.onchange=render; weekSel.onchange=()=>{ updatePhaseLabel(); render(); };
+
+/* ---------------- Init entry shape ---------------- */
+function init(day){
+  return {
+    warmup: PROGRAM[day].warmup.map(()=>false),
+    strength: PROGRAM[day].strength.map(b=>({weight:"",notes:"",sets:Array.from({length:b.sets},()=>({done:false}))})),
+    core: PROGRAM[day].core.map(()=>false),
+    jump: PROGRAM[day].jump.map(()=>false),
+    notes:""
+  };
+}
+
+/* ---------------- XP/Streak ---------------- */
+function updateXPView(p){
+  const x=getXP(p); xpEl.textContent="XP "+x;
+  const pct=Math.min(100,(x%100)); xpbar.style.width=pct+"%";
+  badges.innerHTML="";
+  [["Bronze",100],["Silver",300],["Gold",600]].forEach(([n,t])=>{
+    const b=document.createElement('span'); b.className='badge'; b.textContent=n+(x>=t?" ✓":""); badges.appendChild(b);
+  });
+}
+function awardXPOnce(p,id,amt){
+  const m=loadEarned(p); if(m[id]) return; m[id]=amt; saveEarned(p,m);
+  setXP(p,getXP(p)+amt); updateXPView(p);
+}
+function updateStreak(p){
+  const today=new Date().toDateString(); const last=getLast(p); let s=getStreak(p);
+  if(last!==today){ const y=new Date(Date.now()-86400000).toDateString(); s=(last===y)?s+1:1; setStreak(p,s); setLast(p,today); }
+  streakEl.textContent="Streak "+getStreak(p);
+}
+
+/* ---------------- Coach card modal ---------------- */
+function openTrainer(label){
+  const name = baseName(label);
+  const d = EX[name];
+  if(!d){ alert("Coach card not found for: "+label); return; }
+  document.getElementById('mTitle').textContent=name;
+  function fill(arr,id){
+    const el=document.getElementById(id); el.innerHTML="";
+    (arr||[]).forEach(x=>{ const li=document.createElement('li'); li.textContent=x; el.appendChild(li); });
+  }
+  fill(d.setup,'mSetup'); fill(d.exec,'mExec'); fill(d.focus,'mFocus'); fill(d.mistakes,'mMistakes'); fill(d.why,'mWhy');
+  document.getElementById('trainerModal').style.display='flex';
+}
+document.getElementById('mClose').onclick=()=>document.getElementById('trainerModal').style.display='none';
+document.getElementById('trainerModal').onclick=(e)=>{ if(e.target.id==='trainerModal') document.getElementById('trainerModal').style.display='none'; };
+
+/* ---------------- Export ---------------- */
+exportBtn.onclick=()=>{
+  const p=playerSel.value,d=+daySel.value,w=+weekSel.value; const e=loadEntry(p,d,w)||init(d);
+  const rows=[["Player","Week","Day","Section","Item","Set","Done","Weight","Notes","XP","Streak","School","Mascot","Colors"]];
+  const set=loadSettings(p);
+  e.warmup.forEach((ck,i)=>rows.push([p,w,d,"Warmup",PROGRAM[d].warmup[i],"",ck?"yes":"","","",getXP(p),getStreak(p),set.school||"",set.mascot||"",set.colors||""]));
+  e.strength.forEach((blk,i)=>{
+    const ex=PROGRAM[d].strength[i].ex;
+    blk.sets.forEach((st,si)=>rows.push([p,w,d,"Strength",ex,si+1,st.done?"yes":"",blk.weight||"",blk.notes||"",getXP(p),getStreak(p),set.school||"",set.mascot||"",set.colors||""]));
+  });
+  e.core.forEach((ck,i)=>rows.push([p,w,d,"Core",PROGRAM[d].core[i],"",ck?"yes":"","","",getXP(p),getStreak(p),set.school||"",set.mascot||"",set.colors||""]));
+  e.jump.forEach((ck,i)=>rows.push([p,w,d,"Jump",PROGRAM[d].jump[i],"",ck?"yes":"","","",getXP(p),getStreak(p),set.school||"",set.mascot||"",set.colors||""]));
+  const csv=rows.map(r=>r.map(x=>`"${(x??"").toString().replace(/"/g,'""')}"`).join(",")).join("\n");
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"})); a.download=`OSC_${p}_w${w}_d${d}.csv`; a.click();
+};
+
+/* ---------------- Render helpers ---------------- */
+function totalBoxes(d){ let t=0; t+=PROGRAM[d].warmup.length + PROGRAM[d].core.length + PROGRAM[d].jump.length; PROGRAM[d].strength.forEach(blk=>t+=blk.sets); return t; }
+function currentDone(data,d){ let c=0; data.warmup.forEach(x=>{if(x)c++;}); data.core.forEach(x=>{if(x)c++;}); data.jump.forEach(x=>{if(x)c++;}); PROGRAM[d].strength.forEach((blk,i)=>data.strength[i].sets.forEach(s=>{if(s.done)c++;})); return c; }
+
+function sectionCard(title){
+  const el=document.createElement('div'); el.className="card outline";
+  const h=document.createElement('strong'); h.textContent=title;
+  el.appendChild(h);
+  return el;
+}
+
+function updatePhaseLabel(){
+  const w = +weekSel.value || 1;
+  const txt = (w<=6) ? 'Phase 1' : 'Phase 2';
+  if(phaseLabel) phaseLabel.textContent = txt;
+}
+
+/* ---------------- Render ---------------- */
+function render(){
+  updatePhaseLabel();
+  const p=playerSel.value,d=+daySel.value,w=+weekSel.value||1; if(!weekSel.value) weekSel.value=1;
+  const set=loadSettings(p);
+  document.getElementById('schoolTag').textContent=(set.school||"School")+" "+(set.mascot||"Mascot")+" | "+(set.colors||"");
+  const data=loadEntry(p,d,w)||init(d);
+  updateXPView(p); updateStreak(p);
+
+  // Why today matters (unique by week/day)
+  try{
+    whyDiv.innerHTML = (WHY[w]&&WHY[w][d]) ? ("<div>• "+WHY[w][d]+"</div>") :
+      PROGRAM[d].why.map(t=>"<div class='muted'>• "+t+"</div>").join("");
+  }catch{ whyDiv.innerHTML = PROGRAM[d].why.map(t=>"<div class='muted'>• "+t+"</div>").join(""); }
+
+  const total=totalBoxes(d); const done=currentDone(data,d); daybar.style.width=(100*done/total)+"%";
+  content.innerHTML="";
+
+  // Warm-Up
+  const warm=sectionCard("Warm-Up");
+  PROGRAM[d].warmup.forEach((it,idx)=>{
+    const row=document.createElement('div'); row.className="row";
+    const id=`wu_${d}_${idx}`;
+    const cb=document.createElement('input'); cb.type="checkbox"; cb.checked=data.warmup[idx];
+    cb.onchange=()=>{
+      data.warmup[idx]=cb.checked; saveEntry(p,d,w,data);
+      if(cb.checked){ awardXPOnce(p,id,5); updateStreak(p); }
+      daybar.style.width=(100*currentDone(data,d)/total)+"%";
+    };
+    const link=document.createElement('span'); link.className="exercise-link"; link.textContent=" "+it;
+    link.onclick=()=>openTrainer(it);
+    row.appendChild(cb); row.appendChild(link); warm.appendChild(row);
+  });
+  content.appendChild(warm);
+
+  // Strength
+  const str=sectionCard("Strength");
+  const header=document.createElement('div'); header.className='grid gridHeader';
+  header.innerHTML="<div>Exercise</div><div>Sets</div><div>Reps</div><div>Weight / Notes</div>";
+  str.appendChild(header);
+
+  PROGRAM[d].strength.forEach((blk,bi)=>{
+    const g=document.createElement('div'); g.className="grid";
+    const link=document.createElement('span'); link.className="exercise-link"; link.textContent=blk.ex; link.onclick=()=>openTrainer(blk.ex);
+    const c1=document.createElement('div'); c1.appendChild(link); g.appendChild(c1);
+    const c2=document.createElement('div'); c2.textContent=blk.sets; g.appendChild(c2);
+    const c3=document.createElement('div'); c3.textContent=blk.reps; g.appendChild(c3);
+    const c4=document.createElement('div');
+    if(blk.weighted){ const winput=document.createElement('input'); winput.placeholder="lb"; winput.style.width="100%"; winput.value=(data.strength[bi].weight||""); winput.oninput=()=>{ data.strength[bi].weight=winput.value; saveEntry(p,d,w,data); }; c4.appendChild(winput); }
+    const tarea=document.createElement('textarea'); tarea.className="note"; tarea.placeholder="Notes"; tarea.value=(data.strength[bi].notes||""); tarea.oninput=()=>{ data.strength[bi].notes=tarea.value; saveEntry(p,d,w,data); }; c4.appendChild(tarea);
+    g.appendChild(c4); str.appendChild(g);
+
+    const setRow=document.createElement('div'); setRow.className="row"; setRow.style.marginTop="6px";
+    for(let s=0;s<blk.sets;s++){
+      const lb=document.createElement('label'); lb.className="row";
+      const cb=document.createElement('input'); cb.type="checkbox"; cb.checked=data.strength[bi].sets[s].done;
+      const id=`st_${d}_${bi}_${s}`;
+      cb.onchange=()=>{ data.strength[bi].sets[s].done=cb.checked; saveEntry(p,d,w,data); if(cb.checked) awardXPOnce(p,id,10); updateStreak(p); daybar.style.width=(100*currentDone(data,d)/total)+"%"; };
+      lb.appendChild(cb); lb.append(" Set "+(s+1)); setRow.appendChild(lb);
+    }
+    str.appendChild(setRow);
+  });
+  content.appendChild(str);
+
+  // Core
+  const core=sectionCard("Core");
+  PROGRAM[d].core.forEach((it,idx)=>{
+    const row=document.createElement('div'); row.className="row";
+    const id=`co_${d}_${idx}`;
+    const cb=document.createElement('input'); cb.type="checkbox"; cb.checked=data.core[idx];
+    cb.onchange=()=>{ data.core[idx]=cb.checked; saveEntry(p,d,w,data); if(cb.checked) awardXPOnce(p,id,5); updateStreak(p); daybar.style.width=(100*currentDone(data,d)/total)+"%"; };
+    const link=document.createElement('span'); link.className="exercise-link"; link.textContent=" "+it; link.onclick=()=>openTrainer(it);
+    row.appendChild(cb); row.appendChild(link); core.appendChild(row);
+  });
+  content.appendChild(core);
+
+  // Jump Mechanics
+  const jump=sectionCard("Jump Mechanics");
+  PROGRAM[d].jump.forEach((it,idx)=>{
+    const row=document.createElement('div'); row.className="row";
+    const id=`jm_${d}_${idx}`;
+    const cb=document.createElement('input'); cb.type="checkbox"; cb.checked=data.jump[idx];
+    cb.onchange=()=>{ data.jump[idx]=cb.checked; saveEntry(p,d,w,data); if(cb.checked) awardXPOnce(p,id,8); updateStreak(p); daybar.style.width=(100*currentDone(data,d)/total)+"%"; };
+    const link=document.createElement('span'); link.className="exercise-link"; link.textContent=" "+it; link.onclick=()=>openTrainer(it);
+    row.appendChild(cb); row.appendChild(link); jump.appendChild(row);
+  });
+  content.appendChild(jump);
+
+  // Notes bind
+  notes.value=(data.notes||"");
+  notes.oninput=()=>{ data.notes=notes.value; saveEntry(p,d,w,data); };
+}
+
+/* ---------------- First run ---------------- */
+function firstRun(){ refreshPlayers(); playerSel.value = loadPlayers()[0]; if(!weekSel.value) weekSel.value=1; updatePhaseLabel(); render(); }
+firstRun();
+
+</script>
+</body></html>
