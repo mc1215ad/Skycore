@@ -1,364 +1,348 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#0c204a">
-<title>Operation Sky Core — Coach Dashboard v1.1</title>
-<style>
-:root{--bg:#0c204a;--panel:#163678;--text:#e7eef9;--muted:#a0b8d6;--border:#263a64;--accent:#2d6edc;--danger:#d9534f}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
-.wrap{max-width:1080px;margin:0 auto;padding:16px}
-header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-h1{font-size:18px;margin:0}
-.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:12px;margin:12px 0}
-input,select,button,textarea{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 12px;font-size:14px}
-button{cursor:pointer}
-.small{font-size:12px;color:var(--muted)}
-.badge{border:1px solid var(--border);border-radius:999px;padding:4px 8px;font-size:12px;color:var(--muted);margin-right:6px}
-.table{width:100%;border-collapse:collapse}
-.table th,.table td{border-bottom:1px solid var(--border);padding:8px;text-align:left;font-size:14px}
-.table th{color:var(--muted)}
-.kpi{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:10px}
-.kpi .box{background:#0e2a5f;border:1px solid var(--border);border-radius:12px;padding:10px}
-.kpi .val{font-size:20px;font-weight:700}
-.progress{height:8px;background:#0b1a3a;border-radius:999px;border:1px solid var(--border);overflow:hidden}
-.progress>div{height:100%;background:var(--accent);width:0%}
-a.btn,button.btn{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--panel);color:var(--text);text-decoration:none}
-.btn-danger{border-color:#7b2730;background:#52161b}
-.tag{border:1px solid var(--border);padding:2px 8px;border-radius:999px;color:var(--muted);font-size:12px}
-footer{margin:18px 0 8px}
-.hidden{display:none}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <meta name="theme-color" content="#0c204a">
+  <title>Operation Sky Core — Coach Dashboard v1.2</title>
+  <style>
+    :root{--bg:#0c204a;--panel:#163678;--text:#e7eef9;--muted:#a0b8d6;--border:#263a64;--accent:#2d6edc;--danger:#d9534f}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    .wrap{max-width:1080px;margin:0 auto;padding:16px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    h1{font-size:18px;margin:0}
+    .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:12px;margin:12px 0}
+    input,select,button,textarea{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 12px;font-size:14px}
+    button{cursor:pointer}
+    .small{font-size:12px;color:var(--muted)}
+    .badge{border:1px solid var(--border);border-radius:999px;padding:4px 8px;font-size:12px;color:var(--muted);margin-right:6px}
+    .table{width:100%;border-collapse:collapse}
+    .table th,.table td{border-bottom:1px solid var(--border);padding:8px;text-align:left;font-size:14px}
+    .table th{color:var(--muted)}
+    .kpi{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:10px}
+    .kpi .box{background:#0e2a5f;border:1px solid var(--border);border-radius:12px;padding:10px}
+    .kpi .val{font-size:20px;font-weight:700}
+    .progress{height:8px;background:#0b1a3a;border-radius:999px;border:1px solid var(--border);overflow:hidden}
+    .progress>div{height:100%;background:var(--accent);width:0%}
+    a.btn,button.btn{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--panel);color:var(--text);text-decoration:none}
+    .btn-danger{border-color:#7b2730;background:#52161b}
+    .tag{border:1px solid var(--border);padding:2px 8px;border-radius:999px;color:var(--muted);font-size:12px}
+    footer{margin:18px 0 8px}
+    .hidden{display:none}
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="row">
-    <h1>Operation Sky Core — Coach Dashboard <span class="small">(v1.1)</span></h1>
-    <div class="row">
-      <span class="badge">Core Butte Lynx</span>
-      <span class="badge">Blue & White</span>
-    </div>
-  </header>
+  <div class="wrap">
+    <header class="row">
+      <h1>Operation Sky Core — Coach Dashboard <span class="small">(v1.2)</span></h1>
+      <div class="row">
+        <span class="badge">Core Butte Lynx</span>
+        <span class="badge">Blue & White</span>
+      </div>
+    </header>
 
-  <!-- Login Gate -->
-  <div id="loginCard" class="card">
-    <strong>Coach Login</strong>
-    <div class="row" style="margin-top:8px">
-      <input id="pw" type="password" placeholder="Password">
-      <button id="loginBtn" class="btn">Enter</button>
-      <span class="small">Hint: school mascot + year + ! (capital first letter)</span>
+    <!-- Login -->
+    <div id="loginCard" class="card">
+      <strong>Coach Login</strong>
+      <div class="row" style="margin-top:8px">
+        <input id="pw" type="password" placeholder="Password">
+        <button id="loginBtn" class="btn">Enter</button>
+        <span class="small">Hint: school mascot + year + ! (capital first letter)</span>
+      </div>
+      <div id="loginErr" class="small" style="color:#ffb3b3;margin-top:6px;display:none">Incorrect password</div>
     </div>
-    <div id="loginErr" class="small" style="color:#ffb3b3;margin-top:6px;display:none">Incorrect password</div>
-  </div>
 
-  <!-- Main App -->
-  <div id="app" class="hidden">
-    <div class="card">
-      <div class="row" style="justify-content:space-between">
-        <strong>Team Overview</strong>
-        <div class="row">
-          <button id="addMock" class="btn">Add Mock Players</button>
-          <button id="exportJSON" class="btn">Export Team JSON</button>
-          <label class="btn"><input id="importFile" type="file" accept="application/json" style="display:none">Import Team JSON</label>
+    <!-- App -->
+    <div id="app" class="hidden">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <strong>Team Overview</strong>
+          <div class="row">
+            <button id="addMock" class="btn">Add Mock Players</button>
+            <button id="exportJSON" class="btn">Export Team JSON</button>
+            <label class="btn"><input id="importFile" type="file" accept="application/json" style="display:none">Import Team JSON</label>
+          </div>
+        </div>
+        <div class="kpi" style="margin-top:10px">
+          <div class="box"><div class="small">Players</div><div id="kPlayers" class="val">0</div></div>
+          <div class="box"><div class="small">Avg XP</div><div id="kAvgXP" class="val">0</div></div>
+          <div class="box"><div class="small">Avg Streak</div><div id="kAvgStreak" class="val">0</div></div>
+          <div class="box"><div class="small">Today’s Completion (avg)</div><div class="progress"><div id="kAvgProg"></div></div></div>
         </div>
       </div>
-      <div class="kpi" style="margin-top:10px">
-        <div class="box"><div class="small">Players</div><div id="kPlayers" class="val">0</div></div>
-        <div class="box"><div class="small">Avg XP</div><div id="kAvgXP" class="val">0</div></div>
-        <div class="box"><div class="small">Avg Streak</div><div id="kAvgStreak" class="val">0</div></div>
-        <div class="box"><div class="small">Today’s Completion (avg)</div><div class="progress"><div id="kAvgProg"></div></div></div>
-      </div>
-    </div>
 
-    <div class="card">
-      <div class="row" style="justify-content:space-between">
-        <strong>Players</strong>
-        <div class="row">
-          <select id="filterWeek"></select>
-          <select id="filterDay">
-            <option value="1">Day 1</option>
-            <option value="2">Day 2</option>
-            <option value="3">Day 3</option>
-          </select>
-          <input id="search" placeholder="Search by name…" />
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <strong>Players</strong>
+          <div class="row">
+            <select id="filterWeek"></select>
+            <select id="filterDay">
+              <option value="1">Day 1</option>
+              <option value="2">Day 2</option>
+              <option value="3">Day 3</option>
+            </select>
+            <input id="search" placeholder="Search by name…">
+          </div>
         </div>
+
+        <table class="table" id="tbl">
+          <thead>
+            <tr>
+              <th>Player</th><th>Week</th><th>Day</th><th>Completed</th><th>XP</th><th>Streak</th><th>Badges</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div class="small">Tip: Use search to quickly find a player. Delete removes the player from this dashboard’s storage.</div>
       </div>
-<div id="app" class="hidden">
 
-      <table class="table" id="tbl">
-        <thead>
-          <tr>
-            <th>Player</th><th>Week</th><th>Day</th><th>Completed</th><th>XP</th><th>Streak</th><th>Badges</th><th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
-      <div class="small">Tip: Use search to quickly find a player. Delete removes the player from this dashboard’s storage.</div>
+      <div class="card">
+        <strong>Selected Player Detail</strong>
+        <div id="detail" class="small">Choose a player row for a breakdown.</div>
+      </div>
+
+      <footer class="small">
+        <span class="tag">Static coach build (GitHub Pages)</span>
+        <span class="tag">Pulls from Player config</span>
+        <span class="tag">Supports JSON import/export</span>
+        <span class="tag">Password session stored locally</span>
+      </footer>
     </div>
-
-    <div class="card">
-      <strong>Selected Player Detail</strong>
-      <div id="detail" class="small">Choose a player row for a breakdown.</div>
-    </div>
-
-    <footer class="small">
-      <span class="tag">Static coach build (GitHub Pages)</span>
-      <span class="tag">Supports JSON import/export</span>
-      <span class="tag">Delete player</span>
-      <span class="tag">Password session stored locally</span>
-    </footer>
   </div>
-</div>
 
-<script>
-// ---------- Password Gate ----------
-const PASS = "Lynx2025!";
-const SESSION_KEY = "osc_coach_authed";
-const loginCard = document.getElementById('loginCard');
-const app = document.getElementById('app');
-const pw = document.getElementById('pw');
-const loginBtn = document.getElementById('loginBtn');
-const loginErr = document.getElementById('loginErr');
+  <script>
+    // ---------- Password Gate ----------
+    const PASS = "Lynx2025!";                 // capital L, exclamation
+    const SESSION_KEY = "osc_coach_authed";
+    const loginCard = document.getElementById('loginCard');
+    const appEl     = document.getElementById('app');
+    const pw        = document.getElementById('pw');
+    const loginBtn  = document.getElementById('loginBtn');
+    const loginErr  = document.getElementById('loginErr');
 
-function showApp(){ loginCard.classList.add('hidden'); app.classList.remove('hidden'); }
-function requireLogin(){
-  if(localStorage.getItem(SESSION_KEY)==="yes"){ showApp(); init(); return; }
-  loginCard.classList.remove('hidden'); app.classList.add('hidden');
-}
-loginBtn.onclick=()=>{
-  if((pw.value||"").trim()===PASS){ localStorage.setItem(SESSION_KEY,"yes"); showApp(); init(); }
-  else { loginErr.style.display='block'; setTimeout(()=>loginErr.style.display='none', 2000); }
-};
-pw.addEventListener('keydown',e=>{ if(e.key==="Enter") loginBtn.click(); });
-
-// ---------- Demo / Data Model ----------
-const WEEKS=12;
-const PROGRAM={1:{warmup:5,strength:[4,3,3,3,4],core:2,jump:3},
-               2:{warmup:5,strength:[4,3,3,3,3],core:4,jump:4},
-               3:{warmup:4,strength:[4,4,3,3,3],core:2,jump:3}};
-
-function totalBoxesForDay(day){
-  const p=PROGRAM[day];
-  const strengthSets=p.strength.reduce((a,b)=>a+b,0);
-  return p.warmup + p.core + p.jump + strengthSets;
-}
-
-// Coach storage format (static page): keep a local JSON of players with summary
-const STORE_KEY="osc_coach_store_v1";
-function loadStore(){ return JSON.parse(localStorage.getItem(STORE_KEY)||'{"players":{}}'); }
-function saveStore(v){ localStorage.setItem(STORE_KEY, JSON.stringify(v)); }
-
-// Utilities to mock data (since GitHub Pages cannot receive POST)
-function mockPlayer(name){
-  const xp=Math.floor(50+Math.random()*400);
-  const streak=Math.floor(Math.random()*10);
-  const week=1+Math.floor(Math.random()*WEEKS);
-  const day=1+Math.floor(Math.random()*3);
-  const completed = Math.floor(totalBoxesForDay(day)* (0.4+Math.random()*0.6));
-  return {name,xp,streak,week,day,completed};
-}
-
-// ---------- UI refs ----------
-const kPlayers=document.getElementById('kPlayers');
-const kAvgXP=document.getElementById('kAvgXP');
-const kAvgStreak=document.getElementById('kAvgStreak');
-const kAvgProg=document.getElementById('kAvgProg');
-const filterWeek=document.getElementById('filterWeek');
-const filterDay=document.getElementById('filterDay');
-const search=document.getElementById('search');
-const tbody=document.getElementById('tbody');
-const detail=document.getElementById('detail');
-const addMock=document.getElementById('addMock');
-const exportJSON=document.getElementById('exportJSON');
-const importFile=document.getElementById('importFile');
-
-// Populate week filter
-for(let w=1; w<=WEEKS; w++){ const o=document.createElement('option'); o.value=w; o.textContent="Week "+w; filterWeek.appendChild(o); }
-filterWeek.value="1";
-
-// ---------- Render ----------
-function render(){
-  const store=loadStore();
-  const names=Object.keys(store.players);
-  // KPIs
-  kPlayers.textContent = names.length;
-  let avgXP=0, avgStreak=0, avgProg=0, rows=[];
-  const w=+filterWeek.value, d=+filterDay.value; const q=(search.value||"").toLowerCase();
-
-  names.forEach(n=>{
-    const p=store.players[n];
-    if(!p) return;
-    if(q && !n.toLowerCase().includes(q)) return;
-    const week=p.week||w, day=p.day||d;
-    const total=totalBoxesForDay(day);
-    const done=Math.min(p.completed||0,total);
-    rows.push({name:n, xp:p.xp||0, streak:p.streak||0, week, day, done, total});
-  });
-
-  if(rows.length){
-    avgXP = Math.round(rows.reduce((a,r)=>a+r.xp,0)/rows.length);
-    avgStreak = Math.round(rows.reduce((a,r)=>a+r.streak,0)/rows.length);
-    avgProg = Math.round(100*rows.reduce((a,r)=>a+(r.done/r.total),0)/rows.length);
-  }
-  kAvgXP.textContent=avgXP; kAvgStreak.textContent=avgStreak; kAvgProg.style.width=(avgProg||0)+"%";
-
-  // table
-  tbody.innerHTML="";
-  rows.sort((a,b)=>a.name.localeCompare(b.name)).forEach(r=>{
-    const tr=document.createElement('tr');
-    const badges=[];
-    if(r.xp>=600) badges.push("Gold");
-    else if(r.xp>=300) badges.push("Silver");
-    else if(r.xp>=100) badges.push("Bronze");
-    tr.innerHTML = `
-      <td>${r.name}</td>
-      <td>${r.week}</td>
-      <td>${["","Day 1","Day 2","Day 3"][r.day]}</td>
-      <td>${r.done} / ${r.total} <div class="progress" style="margin-top:4px"><div style="width:${Math.round(100*r.done/r.total)}%"></div></div></td>
-      <td>${r.xp}</td>
-      <td>${r.streak}</td>
-      <td>${badges.join(", ")||"-"}</td>
-      <td>
-        <button class="btn" data-view="${r.name}">View</button>
-        <button class="btn btn-danger" data-del="${r.name}">Delete</button>
-      </td>`;
-    tbody.appendChild(tr);
-  });
-}
-
-function setDetail(name){
-  const p=loadStore().players[name];
-  if(!p){ detail.textContent="No data."; return; }
-  const total=totalBoxesForDay(p.day||1);
-  const done=Math.min(p.completed||0,total);
-  detail.innerHTML = `
-    <div class="row"><strong>${name}</strong><span class="badge">Week ${p.week||1}</span><span class="badge">${["","Day 1","Day 2","Day 3"][p.day||1]}</span></div>
-    <div class="row small" style="margin-top:6px">
-      <span>XP: <b>${p.xp||0}</b></span>
-      <span>Streak: <b>${p.streak||0}</b></span>
-      <span>Completed: <b>${done}</b> / ${total}</span>
-    </div>
-    <div class="progress" style="margin-top:6px"><div style="width:${Math.round(100*done/total)}%"></div></div>
-  `;
-}
-
-// ---------- Events ----------
-document.addEventListener('click',e=>{
-  const v=e.target.getAttribute?.('data-view');
-  const del=e.target.getAttribute?.('data-del');
-  if(v){ setDetail(v); }
-  if(del){
-    if(confirm(`Delete ${del} from coach dashboard?`)){
-      const store=loadStore(); delete store.players[del]; saveStore(store); render(); detail.textContent="Player deleted.";
+    function showApp(){ loginCard.classList.add('hidden'); appEl.classList.remove('hidden'); }
+    function requireLogin(){
+      if(localStorage.getItem(SESSION_KEY)==="yes"){ showApp(); init(); return; }
+      loginCard.classList.remove('hidden'); appEl.classList.add('hidden');
     }
-  }
-});
-filterWeek.onchange=render; filterDay.onchange=render; search.oninput=render;
+    loginBtn.onclick=()=>{
+      if((pw.value||"").trim()===PASS){ localStorage.setItem(SESSION_KEY,"yes"); showApp(); init(); }
+      else { loginErr.style.display='block'; setTimeout(()=>loginErr.style.display='none', 2000); }
+    };
+    pw.addEventListener('keydown',e=>{ if(e.key==="Enter") loginBtn.click(); });
 
-addMock.onclick=()=>{
-  const store=loadStore();
-  const names=["Sam","AJ","Trey","Miles","Jordan","Evan","Noah","Zach"];
-  names.forEach(n=>{ store.players[n]=mockPlayer(n); });
-  saveStore(store); render();
-};
+    // ---------- Helpers ----------
+    const esc = s => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    const clampPct = v => Math.max(0, Math.min(100, Math.round(v)));
 
-exportJSON.onclick=()=>{
-  const blob=new Blob([JSON.stringify(loadStore(),null,2)],{type:"application/json"});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download="osc_team.json"; a.click();
-};
-document.querySelector('label.btn').onclick=()=>importFile.click();
-importFile.onchange=(e)=>{
-  const f=e.target.files?.[0]; if(!f) return;
-  const r=new FileReader();
-  r.onload=()=>{ try{
-      const incoming=JSON.parse(r.result);
-      if(!incoming || !incoming.players) throw new Error("Invalid file");
-      saveStore(incoming); render(); detail.textContent="Imported team JSON.";
-    }catch(err){ alert("Import failed: "+err.message); }
-  };
-  r.readAsText(f);
-};
-
-// ---------- Init ----------
-function init(){
-  // build store if missing
-  const store=loadStore();
-  if(!store.players) saveStore({players:{}});
-  // set default filters
-  filterWeek.value = filterWeek.value || "1";
-  filterDay.value = filterDay.value || "1";
-  loadPlayersFromSheet();
-  render();
-}
-
-// ✅ Google Sheet connection (add this line)
-const sheetId = "const sheetId = "1AbCdEfGhIJkLMNopQrStUvWxYz1234567890";
-";  // Replace with your real Sheet ID
-
-requireLogin();
-<script>
-(function () {
-  const PASS = 'Lynx2025!'; // capital L, exclamation
-  // Google Sheet connection
-const sheetUrl = "https://script.google.com/macros/s/AKfycbzQmac5DoL56vY6EJ_1fjfCZntyeS7hYt2n9ZgUZVpARpbyAMdJ6Dnj_Semnvwb1VJ3/exec";
-
-async function loadPlayersFromSheet() {
-  try {
-    const res = await fetch(sheetUrl);
-    const data = await res.json();
-    console.log("Loaded from Sheet:", data);
-    // TODO: display data in the table later
-  } catch (err) {
-    console.error("Sheet load failed:", err);
-  }
-}
-
-  const gate = document.getElementById('gate');        // the login card
-  const inp  = document.getElementById('coachPass');   // <input> for password
-  const btn  = document.getElementById('enterBtn');    // "Enter" button
-  const app  = document.getElementById('wrap');        // main dashboard wrapper
-
-  function tryLogin() {
-    if ((inp.value || '').trim() === PASS) {
-      localStorage.setItem('osc_coach_ok','1');
-      gate.style.display = 'none';
-      if (app) app.style.display = '';
-    } else {
-      alert('Incorrect password.');
+    // ---------- Program model ----------
+    const WEEKS=12;
+    const PROGRAM={1:{warmup:5,strength:[4,3,3,3,4],core:2,jump:3},
+                   2:{warmup:5,strength:[4,3,3,3,3],core:4,jump:4},
+                   3:{warmup:4,strength:[4,4,3,3,3],core:2,jump:3}};
+    function totalBoxesForDay(day){
+      const p=PROGRAM[day]||PROGRAM[1];
+      const strengthSets=p.strength.reduce((a,b)=>a+b,0);
+      return p.warmup + p.core + p.jump + strengthSets;
     }
-  }
 
-  if (btn) btn.addEventListener('click', tryLogin);
-  if (inp) inp.addEventListener('keyup', e => { if (e.key === 'Enter') tryLogin(); });
+    // ---------- Store ----------
+    const STORE_KEY="osc_coach_store_v1";
+    function loadStore(){ return JSON.parse(localStorage.getItem(STORE_KEY)||'{"players":{}}'); }
+    function saveStore(v){ localStorage.setItem(STORE_KEY, JSON.stringify(v)); }
 
-  // auto-unlock if already authenticated
-  if (localStorage.getItem('osc_coach_ok') === '1') {
-    if (gate) gate.style.display = 'none';
-    if (app) app.style.display = '';
-  }
-})();
-</div>
-</script>
+    // ---------- Mock ----------
+    function mockPlayer(name){
+      const xp=Math.floor(50+Math.random()*400);
+      const streak=Math.floor(Math.random()*10);
+      const week=1+Math.floor(Math.random()*WEEKS);
+      const day=1+Math.floor(Math.random()*3);
+      const completed = Math.floor(totalBoxesForDay(day)* (0.4+Math.random()*0.6));
+      return {name,xp,streak,week,day,completed};
+    }
 
+    // ---------- UI refs ----------
+    const kPlayers=document.getElementById('kPlayers');
+    const kAvgXP=document.getElementById('kAvgXP');
+    const kAvgStreak=document.getElementById('kAvgStreak');
+    const kAvgProg=document.getElementById('kAvgProg');
+    const filterWeek=document.getElementById('filterWeek');
+    const filterDay=document.getElementById('filterDay');
+    const search=document.getElementById('search');
+    const tbody=document.getElementById('tbody');
+    const detail=document.getElementById('detail');
+    const addMock=document.getElementById('addMock');
+    const exportJSON=document.getElementById('exportJSON');
+    const importFile=document.getElementById('importFile');
+
+    // Populate week filter
+    for(let w=1; w<=WEEKS; w++){ const o=document.createElement('option'); o.value=w; o.textContent="Week "+w; filterWeek.appendChild(o); }
+    filterWeek.value="1";
+
+    // ---------- Config (reuse player/config.json) ----------
+    let sheetUrl = "";
+    async function loadConfig(){
+      try{
+        const r=await fetch("../player/config.json?t="+Date.now(), {cache:"no-store"});
+        if(r.ok){
+          const j=await r.json();
+          sheetUrl = j.coachSyncUrl || "";
+        }
+      }catch(_){}
+    }
+
+    // ---------- Sheet merge ----------
+    async function loadPlayersFromSheet(){
+      if(!sheetUrl) return;
+      try{
+        const res = await fetch(sheetUrl+"?t="+Date.now(), {cache:"no-store"});
+        const raw = await res.json();
+        const arr = Array.isArray(raw) ? raw : (raw.data || []);
+        if(!Array.isArray(arr)) return;
+
+        const store = loadStore();
+        store.players = store.players || {};
+
+        arr.forEach(row=>{
+          const name = String(row.name || row.player || "").trim();
+          if(!name) return;
+          const week = Number(row.week)||1;
+          const day  = Number(row.day)||1;
+          const completed = Number(row.completed)||0;
+          const xp = Number(row.xp)||0;
+          const streak = Number(row.streak)||0;
+          store.players[name] = {name, week, day, completed, xp, streak};
+        });
+
+        saveStore(store);
+      }catch(err){
+        console.warn("Sheet load failed:", err);
+      }
+    }
+
+    // ---------- Render ----------
+    function render(){
+      const store=loadStore();
+      const names=Object.keys(store.players);
+
+      let avgXP=0, avgStreak=0, avgProg=0, rows=[];
+      const w=+filterWeek.value, d=+filterDay.value; const q=(search.value||"").toLowerCase();
+
+      names.forEach(n=>{
+        const p=store.players[n];
+        if(!p) return;
+        if(q && !n.toLowerCase().includes(q)) return;
+        const week=p.week||w, day=p.day||d;
+        const total=totalBoxesForDay(day);
+        const done=Math.min(p.completed||0,total);
+        rows.push({name:n, xp:p.xp||0, streak:p.streak||0, week, day, done, total});
+      });
+
+      // KPIs (players reflects filtered table)
+      kPlayers.textContent = rows.length;
+      if(rows.length){
+        avgXP = Math.round(rows.reduce((a,r)=>a+r.xp,0)/rows.length);
+        avgStreak = Math.round(rows.reduce((a,r)=>a+r.streak,0)/rows.length);
+        avgProg = clampPct(100*rows.reduce((a,r)=>a+(r.done/r.total),0)/rows.length);
+      }
+      kAvgXP.textContent=avgXP; kAvgStreak.textContent=avgStreak; kAvgProg.style.width=(avgProg||0)+"%";
+
+      // table
+      tbody.innerHTML="";
+      rows.sort((a,b)=>a.name.localeCompare(b.name)).forEach(r=>{
+        const tr=document.createElement('tr');
+        const pct = clampPct(100*r.done/r.total);
+        const badges=[];
+        if(r.xp>=600) badges.push("Gold");
+        else if(r.xp>=300) badges.push("Silver");
+        else if(r.xp>=100) badges.push("Bronze");
+        tr.innerHTML = `
+          <td>${esc(r.name)}</td>
+          <td>${r.week}</td>
+          <td>${["","Day 1","Day 2","Day 3"][r.day]}</td>
+          <td>${r.done} / ${r.total} <div class="progress" style="margin-top:4px"><div style="width:${pct}%"></div></div></td>
+          <td>${r.xp}</td>
+          <td>${r.streak}</td>
+          <td>${badges.join(", ")||"-"}</td>
+          <td>
+            <button class="btn" data-view="${esc(r.name)}">View</button>
+            <button class="btn btn-danger" data-del="${esc(r.name)}">Delete</button>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function setDetail(name){
+      const p=loadStore().players[name];
+      if(!p){ detail.textContent="No data."; return; }
+      const total=totalBoxesForDay(p.day||1);
+      const done=Math.min(p.completed||0,total);
+      detail.innerHTML = `
+        <div class="row"><strong>${esc(name)}</strong><span class="badge">Week ${p.week||1}</span><span class="badge">${["","Day 1","Day 2","Day 3"][p.day||1]}</span></div>
+        <div class="row small" style="margin-top:6px">
+          <span>XP: <b>${p.xp||0}</b></span>
+          <span>Streak: <b>${p.streak||0}</b></span>
+          <span>Completed: <b>${done}</b> / ${total}</span>
+        </div>
+        <div class="progress" style="margin-top:6px"><div style="width:${clampPct(100*done/total)}%"></div></div>
+      `;
+    }
+
+    // ---------- Events ----------
+    document.addEventListener('click',e=>{
+      const v=e.target.getAttribute?.('data-view');
+      const del=e.target.getAttribute?.('data-del');
+      if(v){ setDetail(v); }
+      if(del){
+        if(confirm(`Delete ${del} from coach dashboard?`)){
+          const store=loadStore(); delete store.players[del]; saveStore(store); render(); detail.textContent="Player deleted.";
+        }
+      }
+    });
+    filterWeek.onchange=render; filterDay.onchange=render; search.oninput=render;
+
+    addMock.onclick=()=>{
+      const store=loadStore();
+      const names=["Sam","AJ","Trey","Miles","Jordan","Evan","Noah","Zach"];
+      names.forEach(n=>{ store.players[n]=mockPlayer(n); });
+      saveStore(store); render();
+    };
+
+    exportJSON.onclick=()=>{
+      const blob=new Blob([JSON.stringify(loadStore(),null,2)],{type:"application/json"});
+      const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download="osc_team.json"; a.click();
+    };
+    document.querySelector('label.btn').onclick=()=>importFile.click();
+    importFile.onchange=(e)=>{
+      const f=e.target.files?.[0]; if(!f) return;
+      const r=new FileReader();
+      r.onload=()=>{ try{
+          const incoming=JSON.parse(r.result);
+          if(!incoming || !incoming.players) throw new Error("Invalid file");
+          saveStore(incoming); render(); detail.textContent="Imported team JSON.";
+        }catch(err){ alert("Import failed: "+err.message); }
+      };
+      r.readAsText(f);
+    };
+
+    // ---------- Init ----------
+    async function init(){
+      const store=loadStore();
+      if(!store.players) saveStore({players:{}});
+
+      filterWeek.value = filterWeek.value || "1";
+      filterDay.value = filterDay.value || "1";
+
+      await loadConfig();           // pulls ../player/config.json
+      await loadPlayersFromSheet(); // merges if sheetUrl present
+      render();
+    }
+
+    // Start
+    requireLogin();
+  </script>
 </body>
-  <!-- LOGIN GATE -->
-<div id="gate" style="max-width:800px;margin:24px auto">
-  <div style="background:#163678;border:1px solid #263a64;border-radius:12px;padding:16px">
-    <h2 style="margin:0 0 12px">Operation Sky Core — Coach Dashboard</h2>
-    <div style="display:flex;gap:8px;align-items:center">
-      <input id="coachPass" type="password" placeholder="Coach password"
-             style="flex:1;background:#102a5a;border:1px solid #263a64;color:#e7eef9;border-radius:10px;padding:10px 12px">
-      <button id="enterBtn" style="background:#2d6edc;border:1px solid #263a64;color:white;border-radius:10px;padding:10px 14px;cursor:pointer">
-        Enter
-      </button>
-      <span style="color:#a0b8d6">Hint: mascot + year + !</span>
-    </div>
-  </div>
-</div>
-
 </html>
-
