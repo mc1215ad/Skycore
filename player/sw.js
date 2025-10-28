@@ -1,3 +1,48 @@
-self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open('osc-v21').then(c=>c.addAll(['./','./index.html','./manifest.webmanifest','./sw.js','./icon-192.png','./icon-512.png'])))});
-self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())});
-self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(x=>{const y=x.clone();caches.open('osc-v21').then(c=>c.put(e.request,y));return x}).catch(()=>r)))})
+const CACHE_NAME = "skycore-player-v3.4.0";
+const FILES_TO_CACHE = [
+  "./",
+  "./index.html",
+  "./manifest.webmanifest",
+  "./icon-192.png",
+  "./icon-512.png"
+];
+
+// Install service worker and cache files
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(FILES_TO_CACHE);
+    })
+  );
+  self.skipWaiting();
+});
+
+// Activate new service worker and clear old caches
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((keyList) =>
+      Promise.all(
+        keyList.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
+      )
+    )
+  );
+  self.clients.claim();
+});
+
+// Serve cached files when offline
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      return (
+        response ||
+        fetch(event.request).catch(() =>
+          caches.match("./index.html")
+        )
+      );
+    })
+  );
+});
