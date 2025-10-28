@@ -72,6 +72,32 @@ button{cursor:pointer}.card{background:var(--panel);border:1px solid var(--borde
 <script>
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 
+/* Post with every save */
+  let COACH_URL = "";
+fetch("config.json").then(r=>r.json()).then(c=>COACH_URL = c.coachWebhook).catch(()=>{});
+async function sendCoachSnapshot(){
+  if(!COACH_URL) return;
+  const p = playerSel.value, d = +daySel.value, w = +weekSel.value;
+  const payload = {
+    player:p, week:w, day:d,
+    xp:getXP(p), streak:getStreak(p),
+    notes:notes.value,
+    entry:loadEntry(p,d,w)||init(d),
+    settings:loadSettings(p),
+    ts:new Date().toISOString()
+  };
+  // Use text/plain + no-cors to avoid preflight/CORS headaches
+  try{
+    await fetch(COACH_URL, {
+      method:"POST",
+      headers:{"Content-Type":"text/plain"},
+      body: JSON.stringify(payload),
+      mode:"no-cors"
+    });
+  }catch(_){}
+}
+
+  
 /* ----- Program content (unchanged) ----- */
 const PROGRAM={1:{label:"Day 1 — Lower Body + Jump",why:["Heavy basics raise leg drive and stable landings.","Strong positions protect knees and back."],warmup:["Leg Swings — 10 each","Walking Lunges — 10 each","Bodyweight Squat — 3×10","Standing Calf Raise — 3×10","Light Jumps — 3×5"],strength:[{ex:"Back or Goblet Squat",sets:4,reps:"6–8",weighted:true},{ex:"Romanian Deadlift",sets:3,reps:"8–10",weighted:true},{ex:"Walking Lunges",sets:3,reps:"10 each",weighted:true},{ex:"Bulgarian Split Squat",sets:3,reps:"8 each",weighted:true},{ex:"Standing Calf Raise (Loaded)",sets:4,reps:"12–15",weighted:true}],core:["Hanging Leg Raise — 3×10","Plank — 3×30–45s"],jump:["Two-step approach jumps — 5","Touch rim/backboard — 3×5","Form jumps — 3×10"]},2:{label:"Day 2 — Upper Body + Core",why:["Stronger torso keeps power from leaking.","Arm swing speed adds inches to reach."],warmup:["Arm Circles — 15/15","Band Pull-Apart — 15","Push-up to Down Dog — 8","Shoulder Taps — 10/side","Jumping Jacks — 30s"],strength:[{ex:"Barbell or DB Bench Press",sets:4,reps:"6–8",weighted:true},{ex:"Pull-Ups / Assisted Pull-Ups",sets:3,reps:"6–10",weighted:false},{ex:"Standing Overhead Press",sets:3,reps:"8",weighted:true},{ex:"1-Arm Dumbbell Row",sets:3,reps:"10 each",weighted:true},{ex:"Triceps Dips or Pushdowns",sets:3,reps:"12–15",weighted:false}],core:["Hanging Leg Raise — 3×10","Side Plank — 3×30s each","Stability Ball Roll-outs — 3×12","Bird Dog — 3×10 each"],jump:["MB Chest Pass — 3×10","Overhead MB Slam — 3×10","Clap or Plyo Push-ups — 3×6","Sprint 20 yds × 6"]},3:{label:"Day 3 — Plyos + Practice",why:["Fast contacts train spring.","Approach jumps wire skill to power."],warmup:["Dynamic Skips — 2×20 yds","A-Skips & High Knees — 20 yds each","Light Bounding — 2×10","Submax Jumps — 3 at 50–70%"],strength:[{ex:"Box Jump",sets:4,reps:"5",weighted:false},{ex:"Broad Jump",sets:4,reps:"5",weighted:false},{ex:"Lateral Bounds",sets:3,reps:"6 each",weighted:false},{ex:"Depth Drop → Vertical",sets:3,reps:"5",weighted:false},{ex:"Jump Squat (Bodyweight)",sets:3,reps:"8",weighted:false}],core:["Trap/Barbell Deadlift — 4×5","Hip Thrust or Glute Bridge — 3×10"],jump:["Two-step approach jumps — 8","Touch rim/backboard — 3×5","Dunk attempts — 5–10"]}};
 
@@ -163,7 +189,11 @@ const playerChip=document.getElementById('playerChip');
 function loadSettings(p){ return JSON.parse(localStorage.getItem(settingsKey(p))||'{"school":"CORE Butte High","mascot":"Lynx","colors":"Blue & White","coachUrl":""}'); }
 function saveSettings(p,s){ localStorage.setItem(settingsKey(p), JSON.stringify(s)); }
 function loadEntry(p,d,w){ const raw=localStorage.getItem(key(p,d,w)); return raw?JSON.parse(raw):null; }
-function saveEntry(p,d,w,val){ localStorage.setItem(key(p,d,w), JSON.stringify(val)); }
+function saveEntry(p,d,w,val){ 
+  localStorage.setItem(key(p,d,w), JSON.stringify(val));
+    // fire-and-forget sync on every save
+  sendCoachSnapshot();
+}
 function getXP(p){ return +(localStorage.getItem(xpKey(p))||0); }
 function setXP(p,v){ localStorage.setItem(xpKey(p), v); }
 function getStreak(p){ return +(localStorage.getItem(streakKey(p))||0); }
