@@ -298,7 +298,35 @@ const sheetId = "const sheetId = "1AbCdEfGhIJkLMNopQrStUvWxYz1234567890";
 ";  // Replace with your real Sheet ID
 
 requireLogin();
+<script>
+(function () {
+  const PASS = 'Lynx2025!'; // capital L, exclamation
+  const gate = document.getElementById('gate');        // the login card
+  const inp  = document.getElementById('coachPass');   // <input> for password
+  const btn  = document.getElementById('enterBtn');    // "Enter" button
+  const app  = document.getElementById('wrap');        // main dashboard wrapper
+
+  function tryLogin() {
+    if ((inp.value || '').trim() === PASS) {
+      localStorage.setItem('osc_coach_ok','1');
+      gate.style.display = 'none';
+      if (app) app.style.display = '';
+    } else {
+      alert('Incorrect password.');
+    }
+  }
+
+  if (btn) btn.addEventListener('click', tryLogin);
+  if (inp) inp.addEventListener('keyup', e => { if (e.key === 'Enter') tryLogin(); });
+
+  // auto-unlock if already authenticated
+  if (localStorage.getItem('osc_coach_ok') === '1') {
+    if (gate) gate.style.display = 'none';
+    if (app) app.style.display = '';
+  }
+})();
 </script>
+
 </body>
 </html>
 
