@@ -1,7 +1,7 @@
 {
   "name": "Operation Sky Core — Coach",
   "short_name": "OSC Coach",
-  "id": "./",
+  "id": ".",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
