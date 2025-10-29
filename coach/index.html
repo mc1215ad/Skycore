@@ -211,23 +211,23 @@ async function loadConfig(){
       }
     }
 
-    // ==== ADDED: minimal API helpers for server delete ====
-    async function apiCall(payload){
-      if(!sheetUrl) throw new Error("sheetUrl not configured");
-      const res = await fetch(sheetUrl, {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify(payload),
-      });
-      if(!res.ok) throw new Error("API error "+res.status);
-      const j = await res.json();
-      if(!j || j.ok!==true) throw new Error((j && j.error) || "Unknown API failure");
-      return j;
-    }
-    async function deletePlayerEverywhere(name){
-      return apiCall({ action:"deletePlayer", name });
-    }
-    // ======================================================
+   // ==== ADDED: minimal API helpers for server delete ====
+async function apiCall(payload){
+  if(!syncUrl) throw new Error("syncUrl not configured");
+  const res = await fetch(syncUrl, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify(payload),
+  });
+  if(!res.ok) throw new Error("API error "+res.status);
+  const j = await res.json();
+  if(!j || j.ok!==true) throw new Error((j && j.error) || "Unknown API failure");
+  return j;
+}
+async function deletePlayerEverywhere(name){
+  return apiCall({ action:"deletePlayer", name });
+}
+// ======================================================
 
     // Render
     function render(){
