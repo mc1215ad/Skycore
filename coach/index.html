@@ -170,19 +170,27 @@
     filterWeek.value="1";
 
    // Config from player build
-let sheetUrl = "";   // read-only list
-let syncUrl  = "";   // mutations (delete)
-async function loadConfig(){
-  sheetUrl = ""; syncUrl = "";
-  try{
-    let r = await fetch("../player/config.json?t="+Date.now(), {cache:"no-store"});
-    if(!r.ok) r = await fetch("../config.json?t="+Date.now(), {cache:"no-store"});
-    if(r.ok){
-      const j = await r.json();
-      sheetUrl = j.coachUrl || "";
-      syncUrl  = j.coachSyncUrl || "";
-    }
-  }catch(_){}
+function ensureUrls(){
+  // Hard fallback so the dashboard always works even if config.json isn’t reachable
+  if(!sheetUrl) sheetUrl = "https://script.google.com/macros/s/AKfycbyxmbfxU4WJVzy408NBRnGYaTxDgYC0-dVPe-sJJh8uP3IisnjnxuVYzDup7xvbjr2r/exec";
+  if(!syncUrl)  syncUrl  = sheetUrl;
+}
+
+// in refresh and init flows, call ensureUrls() after loadConfig()
+refreshBtn.onclick = async ()=>{
+  await loadConfig(); ensureUrls();
+  await loadPlayersFromSheet();
+  render();
+};
+
+async function init(){
+  const store=loadStore();
+  if(!store.players) saveStore({players:{}});
+  filterWeek.value = filterWeek.value || "1";
+  filterDay.value = filterDay.value || "1";
+  await loadConfig(); ensureUrls();
+  await loadPlayersFromSheet();
+  render();
 }
 
     // Pull from Apps Script JSON (doGet)
@@ -216,7 +224,7 @@ async function apiCall(payload){
   if(!syncUrl) throw new Error("syncUrl not configured");
   const res = await fetch(syncUrl, {
     method:"POST",
-    headers:{ "Content-Type":"text/plain" },
+    headers:{ "Content-Type":"application/json" },
     body: JSON.stringify(payload),
   });
   if(!res.ok) throw new Error("API error "+res.status);
