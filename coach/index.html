@@ -195,18 +195,26 @@
     }
 
     // ---------- Sheet merge ----------
-    async function loadPlayersFromSheet() {
-  try {
-    const res = await fetch("https://script.google.com/macros/s/AKfycbyk8EucobvUPlw6KHr8X-nn1YaF1yHFLjzTykeympJhg6KIKYXmf0MeUF_CeDjbyYD4/exec"); // same /exec URL
-    const data = await res.json();
-    if (!data || !data.ok) return;
-
-    const store = loadStore();
-    store.players = data.players || {};
-    saveStore(store);
+    async function loadPlayersFromSheet(){
+  try{
+    const res = await fetch(sheetUrl);
+    const data = await res.json();      // { players: { Sam:{...}, AJ:{...} } }
+    const store = { players: {} };
+    for (const [name, rec] of Object.entries(data.players || {})){
+      store.players[name] = {
+        name,
+        xp: rec.xp||0,
+        streak: rec.streak||0,
+        week: rec.week||1,
+        day: rec.day||1,
+        completed: rec.done||0,
+        total: rec.total||1
+      };
+    }
+    localStorage.setItem('osc_coach_store_v1', JSON.stringify(store));
     render();
-  } catch (err) {
-    console.error("Sheet load failed:", err);
+  }catch(err){
+    console.error('Sheet load failed:', err);
   }
 }
 
