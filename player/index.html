@@ -73,29 +73,43 @@ button{cursor:pointer}.card{background:var(--panel);border:1px solid var(--borde
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 
 /* Post with every save */
-  let COACH_URL = "";
-fetch("config.json").then(r=>r.json()).then(c=>COACH_URL = c.coachWebhook).catch(()=>{});
+let COACH_URL = "";
+fetch("./config.json").then(r=>r.json()).then(c=>{
+  COACH_URL = (c && c.coachUrl) || "";
+}).catch(()=>{ COACH_URL = ""; });
+  
 async function sendCoachSnapshot(){
-  if(!COACH_URL) return;
-  const p = playerSel.value, d = +daySel.value, w = +weekSel.value;
-  const payload = {
-    player:p, week:w, day:d,
-    xp:getXP(p), streak:getStreak(p),
-    notes:notes.value,
-    entry:loadEntry(p,d,w)||init(d),
-    settings:loadSettings(p),
-    ts:new Date().toISOString()
-  };
-  // Use text/plain + no-cors to avoid preflight/CORS headaches
   try{
+    if(!COACH_URL) return;
+
+    // get bound player name in player-only build
+    const p = currentPlayer() || promptForNameOnce();
+    const d = +daySel.value;
+    const w = +weekSel.value;
+
+    const payload = {
+      player:p, week:w, day:d,
+      xp:getXP(p), streak:getStreak(p),
+      notes:notes.value,
+      entry:loadEntry(p,d,w)||init(d),
+      settings:loadSettings(p),
+      ts:new Date().toISOString()
+    };
+
+    // Try sendBeacon first (fire-and-forget, text/plain only)
+    const ok = (navigator.sendBeacon && navigator.sendBeacon(COACH_URL, new Blob([JSON.stringify(payload)], {type:"text/plain"})));
+    if(ok) return;
+
+    // Fallback to fetch without CORS preflight
     await fetch(COACH_URL, {
-      method:"POST",
-      headers:{"Content-Type":"text/plain"},
+      method: "POST",
+      headers: {"Content-Type":"text/plain"},
       body: JSON.stringify(payload),
-      mode:"no-cors"
+      mode: "no-cors"
     });
-  }catch(_){}
+  }catch(_){ /* swallow to avoid interrupting UI */ }
 }
+
 
   
 /* ----- Program content (unchanged) ----- */
