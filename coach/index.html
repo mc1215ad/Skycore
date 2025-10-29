@@ -169,22 +169,21 @@
     for(let w=1; w<=WEEKS; w++){ const o=document.createElement('option'); o.value=w; o.textContent="Week "+w; filterWeek.appendChild(o); }
     filterWeek.value="1";
 
-    // Config from player build
-    let sheetUrl = "";
-    async function loadConfig(){
-      sheetUrl = "";
-      try{
-        // player build keeps config.json in ../player or sibling player/
-        let r = await fetch("../player/config.json?t="+Date.now(), {cache:"no-store"});
-        if(!r.ok){
-          r = await fetch("../config.json?t="+Date.now(), {cache:"no-store"});
-        }
-        if(r.ok){
-          const j=await r.json();
-          sheetUrl = j.coachUrl || "";
-        }
-      }catch(_){}
+   // Config from player build
+let sheetUrl = "";   // read-only list
+let syncUrl  = "";   // mutations (delete)
+async function loadConfig(){
+  sheetUrl = ""; syncUrl = "";
+  try{
+    let r = await fetch("../player/config.json?t="+Date.now(), {cache:"no-store"});
+    if(!r.ok) r = await fetch("../config.json?t="+Date.now(), {cache:"no-store"});
+    if(r.ok){
+      const j = await r.json();
+      sheetUrl = j.coachUrl || "";
+      syncUrl  = j.coachSyncUrl || "";
     }
+  }catch(_){}
+}
 
     // Pull from Apps Script JSON (doGet)
     async function loadPlayersFromSheet(){
@@ -300,17 +299,21 @@
       const v=e.target.getAttribute && e.target.getAttribute('data-view');
       const del=e.target.getAttribute && e.target.getAttribute('data-del');
       if(v){ setDetail(v); }
-      if(del){
-        if(confirm(`Permanently delete ${del} from Sheets and this dashboard?`)){
-          try{
-            await deletePlayerEverywhere(del);                // server delete
-            const store=loadStore(); delete store.players[del]; // local delete
-            saveStore(store); render(); detail.textContent="Player deleted.";
-          }catch(err){
-            alert("Delete failed: "+(err && err.message ? err.message : err));
-          }
-        }
-      }
+      if (del) {
+  if (confirm(`Permanently delete ${del} from Sheets and this dashboard?`)) {
+    try {
+      await deletePlayerEverywhere(del);              // server delete
+      const store = loadStore();                      // local delete
+      delete store.players[del];
+      saveStore(store);
+      render();
+      detail.textContent = "Player deleted.";
+    } catch (err) {
+      alert("Delete failed: " + (err && err.message ? err.message : err));
+    }
+  }
+}
+
     });
     filterWeek.onchange=render; filterDay.onchange=render; search.oninput=render;
     refreshBtn.onclick=async()=>{ await loadConfig(); await loadPlayersFromSheet(); render(); };
