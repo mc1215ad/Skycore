@@ -216,7 +216,7 @@ async function apiCall(payload){
   if(!syncUrl) throw new Error("syncUrl not configured");
   const res = await fetch(syncUrl, {
     method:"POST",
-    headers:{ "Content-Type":"application/json" },
+    headers:{ "Content-Type":"text/plain" },
     body: JSON.stringify(payload),
   });
   if(!res.ok) throw new Error("API error "+res.status);
