@@ -312,6 +312,14 @@ function render(){
   notes.value=(data.notes||""); notes.oninput=()=>{ data.notes=notes.value; saveEntry(p,d,w,data); };
 }
 
+function debounce(fn, ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
+const sendCoachSnapshotDebounced = debounce(sendCoachSnapshot, 350);
+// then in saveEntry(...), call:
+saveEntry = (p,d,w,val)=>{
+  localStorage.setItem(key(p,d,w), JSON.stringify(val));
+  sendCoachSnapshotDebounced();
+};
+  
 for(let w=1; w<=WEEKS; w++){ const o=document.createElement('option'); o.value=w; o.textContent="Week "+w; weekSel.appendChild(o); }
 daySel.onchange=render; weekSel.onchange=render;
 
