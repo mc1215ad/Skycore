@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="manifest" href="../manifest.webmanifest">
   <meta name="theme-color" content="#0c204a">
-  <title>Operation Sky Core — Coach Dashboard v1.2</title>
+  <title>Operation Sky Core — Coach Dashboard v1.3</title>
   <style>
-    :root{--bg:#0c204a;--panel:#163678;--text:#e7eef9;--muted:#a0b8d6;--border:#263a64;--accent:#2d6edc;--danger:#d9534f}
+    :root{--bg:#0c204a;--panel:#163678;--text:#e7eef9;--muted:#a0b8d6;--border:#263a64;--accent:#2d6edc}
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
     .wrap{max-width:1080px;margin:0 auto;padding:16px}
@@ -15,29 +15,26 @@
     h1{font-size:18px;margin:0}
     .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
     .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:12px;margin:12px 0}
-    input,select,button,textarea{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 12px;font-size:14px}
+    input,select,button{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 12px;font-size:14px}
     button{cursor:pointer}
     .small{font-size:12px;color:var(--muted)}
     .badge{border:1px solid var(--border);border-radius:999px;padding:4px 8px;font-size:12px;color:var(--muted);margin-right:6px}
     .table{width:100%;border-collapse:collapse}
-    .table th,.table td{border-bottom:1px solid var(--border);padding:8px;text-align:left;font-size:14px}
+    .table th,.table td{border-bottom:1px solid var(--border);padding:8px;text-align:left;font-size:14px;vertical-align:top}
     .table th{color:var(--muted)}
     .kpi{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:10px}
     .kpi .box{background:#0e2a5f;border:1px solid var(--border);border-radius:12px;padding:10px}
     .kpi .val{font-size:20px;font-weight:700}
     .progress{height:8px;background:#0b1a3a;border-radius:999px;border:1px solid var(--border);overflow:hidden}
     .progress>div{height:100%;background:var(--accent);width:0%}
-    a.btn,button.btn{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--panel);color:var(--text);text-decoration:none}
-    .btn-danger{border-color:#7b2730;background:#52161b}
-    .tag{border:1px solid var(--border);padding:2px 8px;border-radius:999px;color:var(--muted);font-size:12px}
-    footer{margin:18px 0 8px}
+    a.btn,button.btn,label.btn{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--panel);color:var(--text);text-decoration:none}
     .hidden{display:none}
   </style>
 </head>
 <body>
   <div class="wrap">
     <header class="row">
-      <h1>Operation Sky Core — Coach Dashboard <span class="small">(v1.2)</span></h1>
+      <h1>Operation Sky Core — Coach Dashboard <span class="small">(v1.3)</span></h1>
       <div class="row">
         <span class="badge">Core Butte Lynx</span>
         <span class="badge">Blue & White</span>
@@ -50,7 +47,7 @@
       <div class="row" style="margin-top:8px">
         <input id="pw" type="password" placeholder="Password">
         <button id="loginBtn" class="btn">Enter</button>
-        <span class="small">Hint: school mascot + year + ! (capital first letter)</span>
+        <span class="small">Hint: mascot + year + !</span>
       </div>
       <div id="loginErr" class="small" style="color:#ffb3b3;margin-top:6px;display:none">Incorrect password</div>
     </div>
@@ -61,6 +58,7 @@
         <div class="row" style="justify-content:space-between">
           <strong>Team Overview</strong>
           <div class="row">
+            <button id="refresh" class="btn">Refresh</button>
             <button id="addMock" class="btn">Add Mock Players</button>
             <button id="exportJSON" class="btn">Export Team JSON</button>
             <label class="btn"><input id="importFile" type="file" accept="application/json" style="display:none">Import Team JSON</label>
@@ -70,7 +68,7 @@
           <div class="box"><div class="small">Players</div><div id="kPlayers" class="val">0</div></div>
           <div class="box"><div class="small">Avg XP</div><div id="kAvgXP" class="val">0</div></div>
           <div class="box"><div class="small">Avg Streak</div><div id="kAvgStreak" class="val">0</div></div>
-          <div class="box"><div class="small">Today’s Completion (avg)</div><div class="progress"><div id="kAvgProg"></div></div></div>
+          <div class="box"><div class="small">Today Completion</div><div class="progress"><div id="kAvgProg"></div></div></div>
         </div>
       </div>
 
@@ -96,7 +94,7 @@
           </thead>
           <tbody id="tbody"></tbody>
         </table>
-        <div class="small">Tip: Use search to quickly find a player. Delete removes the player from this dashboard’s storage.</div>
+        <div class="small">Delete removes only from this dashboard storage.</div>
       </div>
 
       <div class="card">
@@ -105,24 +103,23 @@
       </div>
 
       <footer class="small">
-        <span class="tag">Static coach build (GitHub Pages)</span>
-        <span class="tag">Pulls from Player config</span>
-        <span class="tag">Supports JSON import/export</span>
-        <span class="tag">Password session stored locally</span>
+        <span class="badge">Static coach build</span>
+        <span class="badge">Pulls from Player config</span>
+        <span class="badge">JSON import and export</span>
+        <span class="badge">Local password session</span>
       </footer>
     </div>
   </div>
 
   <script>
-    // ---------- Password Gate ----------
-    const PASS = "Lynx2025!";                 // capital L, exclamation
+    // Password gate
+    const PASS = "Lynx2025!";
     const SESSION_KEY = "osc_coach_authed";
     const loginCard = document.getElementById('loginCard');
     const appEl     = document.getElementById('app');
     const pw        = document.getElementById('pw');
     const loginBtn  = document.getElementById('loginBtn');
     const loginErr  = document.getElementById('loginErr');
-
     function showApp(){ loginCard.classList.add('hidden'); appEl.classList.remove('hidden'); }
     function requireLogin(){
       if(localStorage.getItem(SESSION_KEY)==="yes"){ showApp(); init(); return; }
@@ -134,11 +131,11 @@
     };
     pw.addEventListener('keydown',e=>{ if(e.key==="Enter") loginBtn.click(); });
 
-    // ---------- Helpers ----------
+    // Helpers
     const esc = s => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
     const clampPct = v => Math.max(0, Math.min(100, Math.round(v)));
 
-    // ---------- Program model ----------
+    // Program model (fallback if API does not provide totals)
     const WEEKS=12;
     const PROGRAM={1:{warmup:5,strength:[4,3,3,3,4],core:2,jump:3},
                    2:{warmup:5,strength:[4,3,3,3,3],core:4,jump:4},
@@ -149,22 +146,12 @@
       return p.warmup + p.core + p.jump + strengthSets;
     }
 
-    // ---------- Store ----------
+    // Store
     const STORE_KEY="osc_coach_store_v1";
     function loadStore(){ return JSON.parse(localStorage.getItem(STORE_KEY)||'{"players":{}}'); }
     function saveStore(v){ localStorage.setItem(STORE_KEY, JSON.stringify(v)); }
 
-    // ---------- Mock ----------
-    function mockPlayer(name){
-      const xp=Math.floor(50+Math.random()*400);
-      const streak=Math.floor(Math.random()*10);
-      const week=1+Math.floor(Math.random()*WEEKS);
-      const day=1+Math.floor(Math.random()*3);
-      const completed = Math.floor(totalBoxesForDay(day)* (0.4+Math.random()*0.6));
-      return {name,xp,streak,week,day,completed};
-    }
-
-    // ---------- UI refs ----------
+    // UI refs
     const kPlayers=document.getElementById('kPlayers');
     const kAvgXP=document.getElementById('kAvgXP');
     const kAvgStreak=document.getElementById('kAvgStreak');
@@ -177,16 +164,21 @@
     const addMock=document.getElementById('addMock');
     const exportJSON=document.getElementById('exportJSON');
     const importFile=document.getElementById('importFile');
+    const refreshBtn=document.getElementById('refresh');
 
-    // Populate week filter
     for(let w=1; w<=WEEKS; w++){ const o=document.createElement('option'); o.value=w; o.textContent="Week "+w; filterWeek.appendChild(o); }
     filterWeek.value="1";
 
-    // ---------- Config (reuse player/config.json) ----------
+    // Config from player build
     let sheetUrl = "";
     async function loadConfig(){
+      sheetUrl = "";
       try{
-        const r=await fetch("../player/config.json?t="+Date.now(), {cache:"no-store"});
+        // player build keeps config.json in ../player or sibling player/
+        let r = await fetch("../player/config.json?t="+Date.now(), {cache:"no-store"});
+        if(!r.ok){
+          r = await fetch("../config.json?t="+Date.now(), {cache:"no-store"});
+        }
         if(r.ok){
           const j=await r.json();
           sheetUrl = j.coachUrl || "";
@@ -194,32 +186,33 @@
       }catch(_){}
     }
 
-    // ---------- Sheet merge ----------
+    // Pull from Apps Script JSON (doGet)
     async function loadPlayersFromSheet(){
-  try{
-    const res = await fetch(sheetUrl);
-    const data = await res.json();      // { players: { Sam:{...}, AJ:{...} } }
-    const store = { players: {} };
-    for (const [name, rec] of Object.entries(data.players || {})){
-      store.players[name] = {
-        name,
-        xp: rec.xp||0,
-        streak: rec.streak||0,
-        week: rec.week||1,
-        day: rec.day||1,
-        completed: rec.done||0,
-        total: rec.total||1
-      };
+      if(!sheetUrl) return;
+      try{
+        const res = await fetch(sheetUrl+"?t="+Date.now(), {cache:"no-store"});
+        const data = await res.json();  // { ok:true, players:{ name:{week,day,xp,streak,completed,total} } }
+        const store = { players: {} };
+        for (const [name, rec] of Object.entries(data.players || {})){
+          const total = Number(rec.total||0) || totalBoxesForDay(Number(rec.day||1));
+          const done  = Math.min(Number(rec.completed||0), total);
+          store.players[name] = {
+            name,
+            xp: Number(rec.xp||0),
+            streak: Number(rec.streak||0),
+            week: Number(rec.week||1),
+            day:  Number(rec.day||1),
+            completed: done,
+            total
+          };
+        }
+        saveStore(store);
+      }catch(err){
+        console.error("Sheet load failed", err);
+      }
     }
-    localStorage.setItem('osc_coach_store_v1', JSON.stringify(store));
-    render();
-  }catch(err){
-    console.error('Sheet load failed:', err);
-  }
-}
 
-
-    // ---------- Render ----------
+    // Render
     function render(){
       const store=loadStore();
       const names=Object.keys(store.players);
@@ -232,40 +225,37 @@
         if(!p) return;
         if(q && !n.toLowerCase().includes(q)) return;
         const week=p.week||w, day=p.day||d;
-        const total=totalBoxesForDay(day);
+        const total=(p.total && p.day===day && p.week===week) ? p.total : totalBoxesForDay(day);
         const done=Math.min(p.completed||0,total);
         rows.push({name:n, xp:p.xp||0, streak:p.streak||0, week, day, done, total});
       });
 
-      // KPIs (players reflects filtered table)
       kPlayers.textContent = rows.length;
       if(rows.length){
         avgXP = Math.round(rows.reduce((a,r)=>a+r.xp,0)/rows.length);
         avgStreak = Math.round(rows.reduce((a,r)=>a+r.streak,0)/rows.length);
-        avgProg = clampPct(100*rows.reduce((a,r)=>a+(r.done/r.total),0)/rows.length);
+        const progVals = rows.map(r=> r.total>0 ? (r.done/r.total) : 0);
+        avgProg = clampPct(100 * progVals.reduce((a,b)=>a+b,0)/rows.length);
       }
       kAvgXP.textContent=avgXP; kAvgStreak.textContent=avgStreak; kAvgProg.style.width=(avgProg||0)+"%";
 
-      // table
       tbody.innerHTML="";
       rows.sort((a,b)=>a.name.localeCompare(b.name)).forEach(r=>{
         const tr=document.createElement('tr');
-        const pct = clampPct(100*r.done/r.total);
-        const badges=[];
-        if(r.xp>=600) badges.push("Gold");
-        else if(r.xp>=300) badges.push("Silver");
-        else if(r.xp>=100) badges.push("Bronze");
+        const pct = r.total>0 ? clampPct(100*r.done/r.total) : 0;
+        const badges = (r.xp>=600)?["Gold"] : (r.xp>=300)?["Silver"] : (r.xp>=100)?["Bronze"] : [];
         tr.innerHTML = `
           <td>${esc(r.name)}</td>
           <td>${r.week}</td>
           <td>${["","Day 1","Day 2","Day 3"][r.day]}</td>
-          <td>${r.done} / ${r.total} <div class="progress" style="margin-top:4px"><div style="width:${pct}%"></div></div></td>
+          <td>${r.done} / ${r.total||0}
+              <div class="progress" style="margin-top:4px"><div style="width:${pct}%"></div></div></td>
           <td>${r.xp}</td>
           <td>${r.streak}</td>
           <td>${badges.join(", ")||"-"}</td>
           <td>
             <button class="btn" data-view="${esc(r.name)}">View</button>
-            <button class="btn btn-danger" data-del="${esc(r.name)}">Delete</button>
+            <button class="btn" data-del="${esc(r.name)}">Delete</button>
           </td>`;
         tbody.appendChild(tr);
       });
@@ -274,8 +264,8 @@
     function setDetail(name){
       const p=loadStore().players[name];
       if(!p){ detail.textContent="No data."; return; }
-      const total=totalBoxesForDay(p.day||1);
-      const done=Math.min(p.completed||0,total);
+      const total = p.total || totalBoxesForDay(p.day||1);
+      const done  = Math.min(p.completed||0,total);
       detail.innerHTML = `
         <div class="row"><strong>${esc(name)}</strong><span class="badge">Week ${p.week||1}</span><span class="badge">${["","Day 1","Day 2","Day 3"][p.day||1]}</span></div>
         <div class="row small" style="margin-top:6px">
@@ -283,14 +273,14 @@
           <span>Streak: <b>${p.streak||0}</b></span>
           <span>Completed: <b>${done}</b> / ${total}</span>
         </div>
-        <div class="progress" style="margin-top:6px"><div style="width:${clampPct(100*done/total)}%"></div></div>
+        <div class="progress" style="margin-top:6px"><div style="width:${clampPct(total?100*done/total:0)}%"></div></div>
       `;
     }
 
-    // ---------- Events ----------
+    // Events
     document.addEventListener('click',e=>{
-      const v=e.target.getAttribute?.('data-view');
-      const del=e.target.getAttribute?.('data-del');
+      const v=e.target.getAttribute && e.target.getAttribute('data-view');
+      const del=e.target.getAttribute && e.target.getAttribute('data-del');
       if(v){ setDetail(v); }
       if(del){
         if(confirm(`Delete ${del} from coach dashboard?`)){
@@ -299,21 +289,28 @@
       }
     });
     filterWeek.onchange=render; filterDay.onchange=render; search.oninput=render;
+    refreshBtn.onclick=async()=>{ await loadConfig(); await loadPlayersFromSheet(); render(); };
 
+    // Mock and import/export
+    function mockPlayer(name){
+      const week=1+Math.floor(Math.random()*WEEKS);
+      const day=1+Math.floor(Math.random()*3);
+      const total=totalBoxesForDay(day);
+      const done=Math.floor(total*(0.4+Math.random()*0.6));
+      return {name,week,day,total,completed:done,xp:Math.floor(50+Math.random()*400),streak:Math.floor(Math.random()*10)};
+    }
     addMock.onclick=()=>{
       const store=loadStore();
-      const names=["Sam","AJ","Trey","Miles","Jordan","Evan","Noah","Zach"];
-      names.forEach(n=>{ store.players[n]=mockPlayer(n); });
+      ["Sam","AJ","Trey","Miles","Jordan","Evan","Noah","Zach"].forEach(n=>{ store.players[n]=mockPlayer(n); });
       saveStore(store); render();
     };
-
     exportJSON.onclick=()=>{
       const blob=new Blob([JSON.stringify(loadStore(),null,2)],{type:"application/json"});
       const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download="osc_team.json"; a.click();
     };
     document.querySelector('label.btn').onclick=()=>importFile.click();
     importFile.onchange=(e)=>{
-      const f=e.target.files?.[0]; if(!f) return;
+      const f=e.target.files && e.target.files[0]; if(!f) return;
       const r=new FileReader();
       r.onload=()=>{ try{
           const incoming=JSON.parse(r.result);
@@ -324,20 +321,17 @@
       r.readAsText(f);
     };
 
-    // ---------- Init ----------
+    // Init
     async function init(){
       const store=loadStore();
       if(!store.players) saveStore({players:{}});
-
       filterWeek.value = filterWeek.value || "1";
       filterDay.value = filterDay.value || "1";
-
-      await loadConfig();           // pulls ../player/config.json
-      await loadPlayersFromSheet(); // merges if sheetUrl present
+      await loadConfig();
+      await loadPlayersFromSheet();
       render();
     }
 
-    // Start
     requireLogin();
   </script>
 </body>
