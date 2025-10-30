@@ -295,27 +295,37 @@ async function deletePlayerEverywhere(name){
     }
 
     // Events
-    document.addEventListener('click', async e=>{
-      const v=e.target.getAttribute && e.target.getAttribute('data-view');
-      const del=e.target.getAttribute && e.target.getAttribute('data-del');
-      if(v){ setDetail(v); }
-      if (del) {
-  if (confirm(`Permanently delete ${del} from Sheets and this dashboard?`)) {
-    try {
-      google.script.run.deleteFromSheets();
-      //await deletePlayerEverywhere(del);              // server delete
-      const store = loadStore();                      // local delete
-      delete store.players[del];
-      saveStore(store);
-      render();
-      detail.textContent = "Player deleted.";
-    } catch (err) {
-      alert("Delete failed: " + (err && err.message ? err.message : err));
+   // Replace the delete handler in your coach app
+// Find this section and replace it with the code below:
+
+document.addEventListener('click', async e=>{
+  const v=e.target.getAttribute && e.target.getAttribute('data-view');
+  const del=e.target.getAttribute && e.target.getAttribute('data-del');
+  
+  if(v){ 
+    setDetail(v); 
+  }
+  
+  if (del) {
+    if (confirm(`Permanently delete ${del} from Sheets and this dashboard?`)) {
+      try {
+        // Call the server delete via the syncUrl
+        await deletePlayerEverywhere(del);
+        
+        // Also delete locally
+        const store = loadStore();
+        delete store.players[del];
+        saveStore(store);
+        
+        // Refresh UI
+        render();
+        detail.textContent = `Player "${del}" deleted from Sheets and dashboard.`;
+      } catch (err) {
+        alert("Delete failed: " + (err && err.message ? err.message : err));
+      }
     }
   }
-}
-
-    });
+});
     filterWeek.onchange=render; filterDay.onchange=render; search.oninput=render;
     refreshBtn.onclick=async()=>{ await loadConfig(); await loadPlayersFromSheet(); render(); };
 
