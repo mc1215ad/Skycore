@@ -303,6 +303,7 @@ async function deletePlayerEverywhere(name){
   if (confirm(`Permanently delete ${del} from Sheets and this dashboard?`)) {
     try {
       await deletePlayerEverywhere(del);              // server delete
+      google.script.run.deleteFromSheets();
       const store = loadStore();                      // local delete
       delete store.players[del];
       saveStore(store);
