@@ -169,52 +169,20 @@
     for(let w=1; w<=WEEKS; w++){ const o=document.createElement('option'); o.value=w; o.textContent="Week "+w; filterWeek.appendChild(o); }
     filterWeek.value="1";
 
-// ==== Config from player build (RESTORE THIS BLOCK) ====
-let sheetUrl = "";    // read-only list (GET)
-let syncUrl  = "";    // mutations (POST: delete)
-
+   // Config from player build
+let sheetUrl = "";   // read-only list
+let syncUrl  = "";   // mutations (delete)
 async function loadConfig(){
-  sheetUrl = ""; 
-  syncUrl  = "";
+  sheetUrl = ""; syncUrl = "";
   try{
-    // Try relative paths (works if this page is in /coach/ under the repo)
-    let r = await fetch("../player/config.json?t="+Date.now(), { cache:"no-store" });
-    if(!r.ok) r = await fetch("../config.json?t="+Date.now(), { cache:"no-store" });
-
-    // Absolute fallbacks (works no matter where this page is served from)
-    if(!r.ok) r = await fetch("https://mc1215ad.github.io/Skycore/player/config.json?t="+Date.now(), { cache:"no-store" });
-    if(!r.ok) r = await fetch("https://mc1215ad.github.io/Skycore/config.json?t="+Date.now(), { cache:"no-store" });
-
+    let r = await fetch("../player/config.json?t="+Date.now(), {cache:"no-store"});
+    if(!r.ok) r = await fetch("../config.json?t="+Date.now(), {cache:"no-store"});
     if(r.ok){
       const j = await r.json();
       sheetUrl = j.coachUrl || "";
       syncUrl  = j.coachSyncUrl || "";
     }
   }catch(_){}
-}
-
-function ensureUrls(){
-  // Hard fallback so the dashboard still works even if config.json isn’t reachable
-  if(!sheetUrl) sheetUrl = "https://script.google.com/macros/s/AKfycbyxmbfxU4WJVzy408NBRnGYaTxDgYC0-dVPe-sJJh8uP3IisnjnxuVYzDup7xvbjr2r/exec";
-  if(!syncUrl)  syncUrl  = sheetUrl;
-}
-
-
-// in refresh and init flows, call ensureUrls() after loadConfig()
-refreshBtn.onclick = async ()=>{
-  await loadConfig(); ensureUrls();
-  await loadPlayersFromSheet();
-  render();
-};
-
-async function init(){
-  const store=loadStore();
-  if(!store.players) saveStore({players:{}});
-  filterWeek.value = filterWeek.value || "1";
-  filterDay.value = filterDay.value || "1";
-  await loadConfig(); ensureUrls();
-  await loadPlayersFromSheet();
-  render();
 }
 
     // Pull from Apps Script JSON (doGet)
