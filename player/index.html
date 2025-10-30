@@ -641,23 +641,7 @@ function isDayComplete(p,day,week){
   const total = totalBoxes(day);
   const done = currentDone(data,day);
   return done === total;
-}.min(100,(x%100)); xpbar.style.width=pct+"%"; badges.innerHTML=""; [["Bronze",100],["Silver",300],["Gold",600]].forEach(([n,t])=>{ const b=document.createElement('span'); b.className='badge'; b.textContent=n+(x>=t?" ✓":""); badges.appendChild(b); }); }
-function awardXPOnce(p,id,amt){ 
-  const m=loadEarned(p); 
-  if(m[id]) return; 
-  m[id]=amt; 
-  saveEarned(p,m); 
-  setXP(p,getXP(p)+amt); 
-  
-  // Check if a day was just completed
-  const w=+weekSel.value||1;
-  const d=+daySel.value;
-  setTimeout(()=>{
-    if(isDayComplete(p,d,w)){
-      checkBadgeUnlock(p,d,w);
-    }
-    updateXPView(p);
-  }, 100);
+, 100);
 }
 
 function checkBadgeUnlock(p,day,week){
