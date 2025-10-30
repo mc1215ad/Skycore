@@ -225,7 +225,18 @@ async function apiCall(payload){
   return { ok: true };
 }
 async function deletePlayerEverywhere(name){
-  return apiCall({ action:"deletePlayer", name });
+  if(!syncUrl) throw new Error("syncUrl not configured");
+  
+  // Use GET request with query parameter - no CORS issues
+  const url = syncUrl + "?deletePlayer=" + encodeURIComponent(name);
+  const res = await fetch(url);
+  const j = await res.json();
+  
+  if(!j || j.ok !== true) {
+    throw new Error((j && j.error) || "Delete failed");
+  }
+  
+  return j;
 }
 // ======================================================
 
