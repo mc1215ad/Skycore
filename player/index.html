@@ -607,7 +607,41 @@ function promptForNameOnce(){
   return nm;
 }
 
-function updateXPView(p){ const x=getXP(p); xpEl.textContent="XP "+x; const pct=Math.min(100,(x%100)); xpbar.style.width=pct+"%"; badges.innerHTML=""; [["Bronze",100],["Silver",300],["Gold",600]].forEach(([n,t])=>{ const b=document.createElement('span'); b.className='badge'; b.textContent=n+(x>=t?" ✓":""); badges.appendChild(b); }); }
+function updateXPView(p){ 
+  const x=getXP(p); 
+  xpEl.textContent="XP "+x; 
+  const pct=Math.min(100,(x%100)); 
+  xpbar.style.width=pct+"%"; 
+  
+  // Check badge completion for current week
+  const w=+weekSel.value||1;
+  const d1Complete = isDayComplete(p,1,w);
+  const d2Complete = isDayComplete(p,2,w);
+  const d3Complete = isDayComplete(p,3,w);
+  
+  badges.innerHTML="";
+  const badgeData = [
+    ["Bronze", d1Complete, "Day 1"],
+    ["Silver", d2Complete, "Day 2"],
+    ["Gold", d3Complete, "Day 3"]
+  ];
+  
+  badgeData.forEach(([name, earned, day])=>{
+    const b=document.createElement('span');
+    b.className='badge';
+    b.textContent=name+(earned?" ✓":"");
+    b.title=`Complete ${day} to earn ${name}`;
+    badges.appendChild(b);
+  });
+}
+
+function isDayComplete(p,day,week){
+  const data = loadEntry(p,day,week);
+  if(!data) return false;
+  const total = totalBoxes(day);
+  const done = currentDone(data,day);
+  return done === total;
+}.min(100,(x%100)); xpbar.style.width=pct+"%"; badges.innerHTML=""; [["Bronze",100],["Silver",300],["Gold",600]].forEach(([n,t])=>{ const b=document.createElement('span'); b.className='badge'; b.textContent=n+(x>=t?" ✓":""); badges.appendChild(b); }); }
 function awardXPOnce(p,id,amt){ const m=loadEarned(p); if(m[id]) return; m[id]=amt; saveEarned(p,m); setXP(p,getXP(p)+amt); updateXPView(p); }
 function updateStreak(p){ const today=new Date().toDateString(); const last=getLast(p); let s=getStreak(p); if(last!==today){ const y=new Date(Date.now()-86400000).toDateString(); s=(last===y)?s+1:1; setStreak(p,s); setLast(p,today); } streakEl.textContent="Streak "+getStreak(p); }
 
