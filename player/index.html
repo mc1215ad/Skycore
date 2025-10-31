@@ -550,7 +550,6 @@ function promptForNameOnce(){
 function updateXPView(p){ const x=getXP(p); xpEl.textContent="XP "+x; const pct=Math.min(100,(x%100)); xpbar.style.width=pct+"%"; // Medals now shown per day completion, not XP
 badges.innerHTML=""; }
 function awardXPOnce(p,id,amt){ const m=loadEarned(p); if(m[id]) return; m[id]=amt; saveEarned(p,m); setXP(p,getXP(p)+amt); updateXPView(p); }
-function updateStreak(p){ const today=new Date().toDateString(); const last=getLast(p); let s=getStreak(p); if(last!==today){ const y=new Date(Date.now()-86400000).toDateString(); s=(last===y)?s+1:1; setStreak(p,s); setLast(p,today); } streakEl.textContent="Streak "+getStreak(p); }
 
 function init(day){ return {warmup: PROGRAM[day].warmup.map(()=>false),strength: PROGRAM[day].strength.map(b=>({weight:"",notes:"",sets:Array.from({length:b.sets},()=>({done:false}))})),core: PROGRAM[day].core.map(()=>false),jump: PROGRAM[day].jump.map(()=>false),notes:""}; }
 
