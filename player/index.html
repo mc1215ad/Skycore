@@ -547,7 +547,8 @@ function promptForNameOnce(){
   return nm;
 }
 
-function updateXPView(p){ const x=getXP(p); xpEl.textContent="XP "+x; const pct=Math.min(100,(x%100)); xpbar.style.width=pct+"%"; badges.innerHTML=""; [["Bronze",100],["Silver",300],["Gold",600]].forEach(([n,t])=>{ const b=document.createElement('span'); b.className='badge'; b.textContent=n+(x>=t?" ✓":""); badges.appendChild(b); }); }
+function updateXPView(p){ const x=getXP(p); xpEl.textContent="XP "+x; const pct=Math.min(100,(x%100)); xpbar.style.width=pct+"%"; // Medals now shown per day completion, not XP
+badges.innerHTML=""; }
 function awardXPOnce(p,id,amt){ const m=loadEarned(p); if(m[id]) return; m[id]=amt; saveEarned(p,m); setXP(p,getXP(p)+amt); updateXPView(p); }
 function updateStreak(p){ const today=new Date().toDateString(); const last=getLast(p); let s=getStreak(p); if(last!==today){ const y=new Date(Date.now()-86400000).toDateString(); s=(last===y)?s+1:1; setStreak(p,s); setLast(p,today); } streakEl.textContent="Streak "+getStreak(p); }
 
