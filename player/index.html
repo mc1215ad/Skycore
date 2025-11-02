@@ -579,19 +579,7 @@ function render(){
   updatePhaseLabel();
   const p=currentPlayer(); const d=+daySel.value; const w=+weekSel.value||1;
   playerChip.textContent = p ? `Player: ${p}` : "Player";
-  const data=loadEntry(p,d,w)||init(d);// Check day completion for medals
-const total=totalBoxes(d); 
-const done=currentDone(data,d);
-const dayComplete = (done === total && total > 0);
-badges.innerHTML="";
-const medals = [["Bronze",1],["Silver",2],["Gold",3]];
-medals.forEach(([name,day])=>{
-  const b=document.createElement('span');
-  b.className='badge';
-  const isDayComplete = (d===day && dayComplete);
-  b.textContent=name+(isDayComplete?" ✓":"");
-  badges.appendChild(b);
-});
+  const data=loadEntry(p,d,w)||init(d);
   updateXPView(p); updateStreak(p);
   whyDiv.innerHTML=PROGRAM[d].why.map(t=>"<div class='muted'>• "+t+"</div>").join("");
   const total=totalBoxes(d); const done=currentDone(data,d); xpbar.style.width=(100*done/total)+"%";
