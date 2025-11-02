@@ -594,7 +594,7 @@ medals.forEach(([name,day])=>{
 });
   updateXPView(p); updateStreak(p);
   whyDiv.innerHTML=PROGRAM[d].why.map(t=>"<div class='muted'>• "+t+"</div>").join("");
- xpbar.style.width=(100*done/total)+"%";
+  const total=totalBoxes(d); const done=currentDone(data,d); xpbar.style.width=(100*done/total)+"%";
   content.innerHTML="";
   const warm=document.createElement('div'); warm.className="card"; warm.innerHTML="<strong>Warm-Up</strong>";
   PROGRAM[d].warmup.forEach((it,idx)=>{ const row=document.createElement('div'); row.className="row";
