@@ -5,431 +5,1202 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#0c204a">
-  <title>Operation Sky Core — Coach Dashboard v1.3 (FIXED)</title>
+  <title>Sky Core Coach Dashboard v2.0</title>
   <style>
-    :root{--bg:#0c204a;--panel:#163678;--text:#e7eef9;--muted:#a0b8d6;--border:#263a64;--accent:#2d6edc}
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
-    .wrap{max-width:1080px;margin:0 auto;padding:16px}
-    header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-    h1{font-size:18px;margin:0}
-    .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-    .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:12px;margin:12px 0}
-    input,select,button{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 12px;font-size:14px}
-    button{cursor:pointer}
-    .small{font-size:12px;color:var(--muted)}
-    .badge{border:1px solid var(--border);border-radius:999px;padding:4px 8px;font-size:12px;color:var(--muted);margin-right:6px}
-    .table{width:100%;border-collapse:collapse}
-    .table th,.table td{border-bottom:1px solid var(--border);padding:8px;text-align:left;font-size:14px;vertical-align:top}
-    .table th{color:var(--muted)}
-    .kpi{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:10px}
-    .kpi .box{background:#0e2a5f;border:1px solid var(--border);border-radius:12px;padding:10px}
-    .kpi .val{font-size:20px;font-weight:700}
-    .progress{height:8px;background:#0b1a3a;border-radius:999px;border:1px solid var(--border);overflow:hidden}
-    .progress>div{height:100%;background:var(--accent);width:0%}
-    a.btn,button.btn,label.btn{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--panel);color:var(--text);text-decoration:none}
-    .hidden{display:none}
+    :root {
+      --bg: #0c204a;
+      --bg-elevated: #163678;
+      --panel: #1a2238;
+      --text: #e7eef9;
+      --text-dim: #a0b8d6;
+      --border: #263a64;
+      --accent: #00d9ff;
+      --accent-glow: rgba(0, 217, 255, 0.3);
+      --gold: #ffd700;
+      --green: #00ff88;
+      --yellow: #ffb800;
+      --red: #ff4d6d;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at 20% 30%, rgba(0,217,255,0.08) 0%, transparent 40%),
+                  radial-gradient(circle at 80% 70%, rgba(99,102,241,0.06) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      text-align: center;
+      padding: 32px 0 24px;
+    }
+
+    h1 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, var(--accent) 0%, #6366f1 50%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    button {
+      background: var(--panel);
+      border: 2px solid var(--border);
+      color: var(--text);
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'Rajdhani', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      border-color: var(--accent);
+      background: var(--bg-elevated);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 217, 255, 0.2);
+    }
+
+    /* ===== LOGIN CARD ===== */
+    #loginCard {
+      max-width: 400px;
+      margin: 40px auto;
+      background: var(--panel);
+      border: 2px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+    }
+
+    #loginCard input {
+      width: 100%;
+      margin: 16px 0;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    #loginCard button {
+      width: 100%;
+    }
+
+    #loginErr {
+      color: var(--red);
+      text-align: center;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    /* ===== TEAM OVERVIEW ===== */
+    .team-overview {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-box {
+      background: var(--panel);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      transition: all 0.3s;
+    }
+
+    .stat-box:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 24px rgba(0, 217, 255, 0.2);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 36px;
+      font-weight: 700;
+      font-family: 'Rajdhani', sans-serif;
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(0, 217, 255, 0.4);
+    }
+
+    /* ===== PLAYER CARDS GRID ===== */
+    .players-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 32px;
+    }
+
+    .player-card {
+      background: var(--panel);
+      border: 3px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .player-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    .player-card.on-track {
+      border-color: var(--green);
+    }
+
+    .player-card.on-track:hover {
+      box-shadow: 0 12px 32px rgba(0, 255, 136, 0.3);
+    }
+
+    .player-card.check-in {
+      border-color: var(--yellow);
+    }
+
+    .player-card.check-in:hover {
+      box-shadow: 0 12px 32px rgba(255, 184, 0, 0.3);
+    }
+
+    .player-card.at-risk {
+      border-color: var(--red);
+    }
+
+    .player-card.at-risk:hover {
+      box-shadow: 0 12px 32px rgba(255, 77, 109, 0.3);
+    }
+
+    .player-name {
+      font-size: 24px;
+      font-weight: 700;
+      font-family: 'Rajdhani', sans-serif;
+      color: var(--accent);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .player-meta {
+      font-size: 14px;
+      color: var(--text-dim);
+      margin: 4px 0;
+    }
+
+    .player-status {
+      margin-top: 12px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .player-status.on-track {
+      background: rgba(0, 255, 136, 0.15);
+      color: var(--green);
+    }
+
+    .player-status.check-in {
+      background: rgba(255, 184, 0, 0.15);
+      color: var(--yellow);
+    }
+
+    .player-status.at-risk {
+      background: rgba(255, 77, 109, 0.15);
+      color: var(--red);
+    }
+
+    .delete-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--red);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      font-size: 16px;
+      cursor: pointer;
+      opacity: 0;
+      transition: all 0.2s;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .player-card:hover .delete-btn {
+      opacity: 1;
+    }
+
+    .delete-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(255, 77, 109, 0.5);
+    }
+
+    /* ===== MODAL ===== */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(16px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-box {
+      background: linear-gradient(135deg, #1a2238 0%, #0f1729 100%);
+      border: 3px solid var(--accent);
+      max-width: 1000px;
+      width: 100%;
+      max-height: 90vh;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 30px 90px rgba(0, 217, 255, 0.4);
+      animation: slideUp 0.4s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(30px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-header {
+      padding: 24px 32px;
+      border-bottom: 2px solid var(--accent);
+      background: linear-gradient(135deg, #0e2a5f 0%, #1a2f5c 100%);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+    }
+
+    .modal-close {
+      background: transparent;
+      border: 2px solid var(--border);
+      color: var(--text-dim);
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--panel);
+    }
+
+    .modal-tabs {
+      display: flex;
+      gap: 8px;
+      padding: 16px 32px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 2px solid var(--border);
+      color: var(--text-dim);
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--bg);
+      box-shadow: 0 4px 12px rgba(0, 217, 255, 0.4);
+    }
+
+    .modal-content {
+      padding: 32px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .modal-content::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .modal-content::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .modal-content::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 4px;
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* ===== OVERVIEW TAB ===== */
+    .overview-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .overview-stat {
+      background: rgba(0, 217, 255, 0.1);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .overview-stat-label {
+      font-size: 12px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .overview-stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      font-family: 'Rajdhani', sans-serif;
+      color: var(--accent);
+    }
+
+    .section-breakdown {
+      margin-top: 32px;
+    }
+
+    .section-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .section-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .section-percentage {
+      font-size: 18px;
+      font-weight: 700;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--green));
+      border-radius: 10px;
+      transition: width 0.6s ease;
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    .player-notes {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 24px;
+    }
+
+    .notes-label {
+      font-size: 12px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .notes-content {
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ===== HISTORY TAB ===== */
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .history-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .history-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .history-date {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .history-completion {
+      font-size: 14px;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+
+    /* ===== SAFETY TAB ===== */
+    .safety-indicators {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .safety-indicator {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .safety-indicator.good {
+      border-color: var(--green);
+      background: rgba(0, 255, 136, 0.1);
+    }
+
+    .safety-indicator.warning {
+      border-color: var(--yellow);
+      background: rgba(255, 184, 0, 0.1);
+    }
+
+    .safety-indicator.danger {
+      border-color: var(--red);
+      background: rgba(255, 77, 109, 0.1);
+    }
+
+    .safety-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .safety-label {
+      font-size: 12px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .safety-value {
+      font-size: 24px;
+      font-weight: 700;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .safety-indicator.good .safety-value {
+      color: var(--green);
+    }
+
+    .safety-indicator.warning .safety-value {
+      color: var(--yellow);
+    }
+
+    .safety-indicator.danger .safety-value {
+      color: var(--red);
+    }
+
+    /* ===== PLACEHOLDER TABS ===== */
+    .placeholder {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-dim);
+    }
+
+    .placeholder-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .placeholder-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .placeholder-text {
+      font-size: 14px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .team-overview {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .players-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-box {
+        max-width: 100%;
+        border-radius: 16px;
+      }
+
+      .modal-tabs {
+        overflow-x: auto;
+      }
+
+      .overview-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .safety-indicators {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <header class="row">
-      <h1>Operation Sky Core — Coach Dashboard <span class="small">(v1.3 - FIXED FOR V2.0 API)</span></h1>
-      <div class="row">
-        <span class="badge">Core Butte Lynx</span>
-        <span class="badge">Blue & White</span>
-      </div>
-    </header>
-
-    <!-- Login -->
-    <div id="loginCard" class="card">
-      <strong>Coach Login</strong>
-      <div class="row" style="margin-top:8px">
-        <input id="pw" type="password" placeholder="Password">
-        <button id="loginBtn" class="btn">Enter</button>
-        <span class="small">Hint: mascot + year + !</span>
-      </div>
-      <div id="loginErr" class="small" style="color:#ffb3b3;margin-top:6px;display:none">Incorrect password</div>
+    <!-- LOGIN CARD -->
+    <div id="loginCard">
+      <h1 style="margin-bottom: 16px;">COACH LOGIN</h1>
+      <input id="pw" type="password" placeholder="Enter Password">
+      <button id="loginBtn">ENTER</button>
+      <div id="loginErr" class="hidden">Incorrect password</div>
+      <p style="margin-top: 16px; color: var(--text-dim); font-size: 12px; text-align: center;">
+        Password: Lynx2025!
+      </p>
     </div>
 
-    <!-- App -->
+    <!-- MAIN APP (hidden until login) -->
     <div id="app" class="hidden">
-      <div class="card">
-        <div class="row" style="justify-content:space-between">
-          <strong>Team Overview</strong>
-          <div class="row">
-            <button id="refresh" class="btn">Refresh</button>
-            <button id="addMock" class="btn">Add Mock Players</button>
-            <button id="exportJSON" class="btn">Export Team JSON</button>
-            <label class="btn"><input id="importFile" type="file" accept="application/json" style="display:none">Import Team JSON</label>
+      <header>
+        <h1>OPERATION SKY CORE</h1>
+        <p style="color: var(--text-dim); font-size: 14px; margin-top: 8px;">
+          Coach Dashboard v2.0
+        </p>
+        <div class="header-actions">
+          <button id="refreshBtn">🔄 Refresh</button>
+          <button id="exportBtn">📊 Export Report</button>
+        </div>
+      </header>
+
+      <!-- TEAM OVERVIEW -->
+      <div class="team-overview">
+        <div class="stat-box">
+          <div class="stat-label">Total Players</div>
+          <div class="stat-value" id="statPlayers">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Avg XP</div>
+          <div class="stat-value" id="statXP">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Active</div>
+          <div class="stat-value" id="statActive">0%</div>
+        </div>
+      </div>
+
+      <!-- PLAYER CARDS GRID -->
+      <div class="players-grid" id="playersGrid"></div>
+    </div>
+  </div>
+
+  <!-- PLAYER MODAL -->
+  <div class="modal" id="playerModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">PLAYER</div>
+        <button class="modal-close" id="modalClose">Close</button>
+      </div>
+      
+      <div class="modal-tabs">
+        <button class="tab-btn active" data-tab="overview">Overview</button>
+        <button class="tab-btn" data-tab="history">History</button>
+        <button class="tab-btn" data-tab="safety">Safety</button>
+        <button class="tab-btn" data-tab="notes">Notes</button>
+        <button class="tab-btn" data-tab="messages">Messages</button>
+      </div>
+      
+      <div class="modal-content">
+        <!-- Overview Tab -->
+        <div class="tab-pane active" id="tab-overview"></div>
+        
+        <!-- History Tab -->
+        <div class="tab-pane" id="tab-history"></div>
+        
+        <!-- Safety Tab -->
+        <div class="tab-pane" id="tab-safety"></div>
+        
+        <!-- Notes Tab -->
+        <div class="tab-pane" id="tab-notes">
+          <div class="placeholder">
+            <div class="placeholder-icon">📝</div>
+            <div class="placeholder-title">Coach Notes</div>
+            <div class="placeholder-text">Coming in Phase 2 — Real-time coach notes</div>
           </div>
         </div>
-        <div class="kpi" style="margin-top:10px">
-          <div class="box"><div class="small">Players</div><div id="kPlayers" class="val">0</div></div>
-          <div class="box"><div class="small">Avg XP</div><div id="kAvgXP" class="val">0</div></div>
-          <div class="box"><div class="small">Avg Streak</div><div id="kAvgStreak" class="val">0</div></div>
-          <div class="box"><div class="small">Today Completion</div><div class="progress"><div id="kAvgProg"></div></div></div>
-        </div>
-        <div id="debugInfo" class="small" style="margin-top:10px;padding:8px;background:rgba(0,0,0,0.3);border-radius:8px;display:none"></div>
-      </div>
-
-      <div class="card">
-        <div class="row" style="justify-content:space-between">
-          <strong>Players</strong>
-          <div class="row">
-            <select id="filterWeek"></select>
-            <select id="filterDay">
-              <option value="1">Day 1</option>
-              <option value="2">Day 2</option>
-              <option value="3">Day 3</option>
-            </select>
-            <input id="search" placeholder="Search by name…">
+        
+        <!-- Messages Tab -->
+        <div class="tab-pane" id="tab-messages">
+          <div class="placeholder">
+            <div class="placeholder-icon">💬</div>
+            <div class="placeholder-title">Direct Messaging</div>
+            <div class="placeholder-text">Coming in Phase 2 — Coach-to-player messaging</div>
           </div>
         </div>
-
-        <table class="table" id="tbl">
-          <thead>
-            <tr>
-              <th>Player</th><th>Week</th><th>Day</th><th>Completed</th><th>XP</th><th>Streak</th><th>Badges</th><th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
-        <div class="small">Delete removes only from this dashboard storage.</div>
       </div>
-
-      <div class="card">
-        <strong>Selected Player Detail</strong>
-        <div id="detail" class="small">Choose a player row for a breakdown.</div>
-      </div>
-
-      <footer class="small">
-        <span class="badge">Static coach build</span>
-        <span class="badge">Pulls from Player config</span>
-        <span class="badge">JSON import and export</span>
-        <span class="badge">Local password session</span>
-        <span class="badge">V2.0 API Compatible</span>
-      </footer>
     </div>
   </div>
 
   <script>
-    // Password gate
+    // ========== CONFIG ==========
     const PASS = "Lynx2025!";
-    const SESSION_KEY = "osc_coach_authed";
-    const loginCard = document.getElementById('loginCard');
-    const appEl     = document.getElementById('app');
-    const pw        = document.getElementById('pw');
-    const loginBtn  = document.getElementById('loginBtn');
-    const loginErr  = document.getElementById('loginErr');
-    const debugInfo = document.getElementById('debugInfo');
+    const SESSION_KEY = "osc_coach_authed_v2";
+    const POLL_INTERVAL = 30000; // 30 seconds
     
-    function showApp(){ loginCard.classList.add('hidden'); appEl.classList.remove('hidden'); }
-    function requireLogin(){
-      if(localStorage.getItem(SESSION_KEY)==="yes"){ showApp(); init(); return; }
-      loginCard.classList.remove('hidden'); appEl.classList.add('hidden');
+    let coachUrl = "";
+    let pollTimer = null;
+    let currentPlayerData = null;
+
+    // ========== LOAD CONFIG ==========
+    async function loadConfig() {
+      try {
+        let res = await fetch("./config.json?t=" + Date.now(), { cache: "no-store" });
+        if (!res.ok) {
+          res = await fetch("../config.json?t=" + Date.now(), { cache: "no-store" });
+        }
+        if (res.ok) {
+          const config = await res.json();
+          coachUrl = config.coachUrl || "";
+        }
+      } catch (err) {
+        console.error("Config load failed:", err);
+      }
     }
-    loginBtn.onclick=()=>{
-      if((pw.value||"").trim()===PASS){ localStorage.setItem(SESSION_KEY,"yes"); showApp(); init(); }
-      else { loginErr.style.display='block'; setTimeout(()=>loginErr.style.display='none', 2000); }
+
+    // ========== LOGIN ==========
+    const loginCard = document.getElementById('loginCard');
+    const appEl = document.getElementById('app');
+    const pw = document.getElementById('pw');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginErr = document.getElementById('loginErr');
+
+    function showApp() {
+      loginCard.classList.add('hidden');
+      appEl.classList.remove('hidden');
+    }
+
+    function requireLogin() {
+      if (localStorage.getItem(SESSION_KEY) === "yes") {
+        showApp();
+        init();
+        return;
+      }
+      loginCard.classList.remove('hidden');
+      appEl.classList.add('hidden');
+    }
+
+    loginBtn.onclick = () => {
+      if ((pw.value || "").trim() === PASS) {
+        localStorage.setItem(SESSION_KEY, "yes");
+        showApp();
+        init();
+      } else {
+        loginErr.classList.remove('hidden');
+        setTimeout(() => loginErr.classList.add('hidden'), 2000);
+      }
     };
-    pw.addEventListener('keydown',e=>{ if(e.key==="Enter") loginBtn.click(); });
 
-    // Helpers
-    const esc = s => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-    const clampPct = v => Math.max(0, Math.min(100, Math.round(v)));
+    pw.addEventListener('keydown', e => {
+      if (e.key === "Enter") loginBtn.click();
+    });
 
-    // Program model (fallback if API does not provide totals)
-    const WEEKS=12;
-    const PROGRAM={1:{warmup:5,strength:[4,3,3,3,4],core:2,jump:3},
-                   2:{warmup:5,strength:[4,3,3,3,3],core:4,jump:4},
-                   3:{warmup:4,strength:[4,4,3,3,3],core:2,jump:3}};
-    function totalBoxesForDay(day){
-      const p=PROGRAM[day]||PROGRAM[1];
-      const strengthSets=p.strength.reduce((a,b)=>a+b,0);
-      return p.warmup + p.core + p.jump + strengthSets;
+    // ========== DATA FETCHING ==========
+    async function fetchPlayers() {
+      if (!coachUrl) return { ok: false, players: {} };
+      
+      try {
+        console.log("Fetching data from:", coachUrl);
+        const res = await fetch(coachUrl + "?t=" + Date.now(), { cache: "no-store" });
+        const data = await res.json();
+        console.log("Received data:", data);
+        return data;
+      } catch (err) {
+        console.error("Fetch failed:", err);
+        return { ok: false, players: {} };
+      }
     }
 
-    // Store
-    const STORE_KEY="osc_coach_store_v1";
-    function loadStore(){ return JSON.parse(localStorage.getItem(STORE_KEY)||'{"players":{}}'); }
-    function saveStore(v){ localStorage.setItem(STORE_KEY, JSON.stringify(v)); }
-
-    // UI refs
-    const kPlayers=document.getElementById('kPlayers');
-    const kAvgXP=document.getElementById('kAvgXP');
-    const kAvgStreak=document.getElementById('kAvgStreak');
-    const kAvgProg=document.getElementById('kAvgProg');
-    const filterWeek=document.getElementById('filterWeek');
-    const filterDay=document.getElementById('filterDay');
-    const search=document.getElementById('search');
-    const tbody=document.getElementById('tbody');
-    const detail=document.getElementById('detail');
-    const addMock=document.getElementById('addMock');
-    const exportJSON=document.getElementById('exportJSON');
-    const importFile=document.getElementById('importFile');
-    const refreshBtn=document.getElementById('refresh');
-
-    for(let w=1; w<=WEEKS; w++){ const o=document.createElement('option'); o.value=w; o.textContent="Week "+w; filterWeek.appendChild(o); }
-    filterWeek.value="1";
-
-   // Config from player build
-let sheetUrl = "";   // read-only list
-let syncUrl  = "";   // mutations (delete)
-async function loadConfig(){
-  sheetUrl = ""; syncUrl = "";
-  try{
-    let r = await fetch("../player/config.json?t="+Date.now(), {cache:"no-store"});
-    if(!r.ok) r = await fetch("../config.json?t="+Date.now(), {cache:"no-store"});
-    if(r.ok){
-      const j = await r.json();
-      sheetUrl = j.coachUrl || "";
-      syncUrl  = j.coachSyncUrl || "";
-      console.log("✅ Config loaded:", {sheetUrl, syncUrl});
+    // ========== DELETE PLAYER ==========
+    async function deletePlayer(playerName) {
+      if (!coachUrl) return false;
+      
+      try {
+        const url = coachUrl + "?deletePlayer=" + encodeURIComponent(playerName);
+        const res = await fetch(url);
+        const data = await res.json();
+        return data.ok === true;
+      } catch (err) {
+        console.error("Delete failed:", err);
+        return false;
+      }
     }
-  }catch(err){
-    console.error("❌ Config load failed:", err);
-  }
-}
 
-    // ===== FIXED: Pull from V2.0 Apps Script JSON (doGet) =====
-    async function loadPlayersFromSheet(){
-      if(!sheetUrl) {
-        console.warn("⚠️ No sheetUrl configured");
+    // ========== RENDER ==========
+    async function render() {
+      const data = await fetchPlayers();
+      
+      if (!data.ok || !data.players) {
+        console.error("Invalid data received");
         return;
       }
       
-      console.log("📡 Fetching from:", sheetUrl);
+      const players = Object.values(data.players);
       
-      try{
-        const res = await fetch(sheetUrl+"?t="+Date.now(), {cache:"no-store"});
-        
-        if(!res.ok){
-          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-        }
-        
-        const data = await res.json();
-        console.log("📥 Received data:", data);
-        
-        if(!data || !data.ok){
-          throw new Error("Invalid response: " + JSON.stringify(data));
-        }
-        
-        if(!data.players || Object.keys(data.players).length === 0){
-          console.warn("⚠️ No players in response");
-          saveStore({ players: {} });
-          return;
-        }
-        
-        const store = { players: {} };
-        let playerCount = 0;
-        
-        // V2.0 API uses currentWeek, currentDay, and nested currentWorkout
-        for (const [name, rec] of Object.entries(data.players)){
-          playerCount++;
-          console.log(`Processing player ${playerCount}:`, name, rec);
-          
-          // Map V2.0 API structure to coach app structure
-          const week = Number(rec.currentWeek || rec.week || 1);
-          const day = Number(rec.currentDay || rec.day || 1);
-          
-          // currentWorkout contains completion data
-          const workout = rec.currentWorkout || {};
-          const total = Number(workout.total || rec.total || 0) || totalBoxesForDay(day);
-          const done = Math.min(Number(workout.completed || rec.completed || 0), total);
-          
-          store.players[name] = {
-            name,
-            xp: Number(rec.xp||0),
-            streak: Number(rec.streak||0),  // Will be 0 if not provided
-            week: week,
-            day: day,
-            completed: done,
-            total: total
-          };
-          
-          console.log(`✓ Mapped ${name}:`, store.players[name]);
-        }
-        
-        saveStore(store);
-        console.log(`✅ Successfully loaded ${playerCount} players from sheet`);
-        
-        // Show debug info
-        debugInfo.textContent = `Last sync: ${new Date().toLocaleTimeString()} - ${playerCount} players loaded`;
-        debugInfo.style.display = 'block';
-        
-      }catch(err){
-        console.error("❌ Sheet load failed:", err);
-        debugInfo.textContent = `Error: ${err.message}`;
-        debugInfo.style.display = 'block';
-        debugInfo.style.color = '#ffb3b3';
-      }
+      // Update team stats
+      updateTeamStats(players);
+      
+      // Render player cards
+      renderPlayerCards(players);
     }
 
-// ==== API helpers for server delete ====
-async function apiCall(payload){
-  if(!syncUrl) throw new Error("syncUrl not configured");
-  
-  const res = await fetch(syncUrl, {
-    method:"POST",
-    mode: "no-cors",
-    headers:{ "Content-Type":"text/plain" },
-    body: JSON.stringify(payload),
-  });
-  
-  return { ok: true };
-}
+    function updateTeamStats(players) {
+      const statPlayers = document.getElementById('statPlayers');
+      const statXP = document.getElementById('statXP');
+      const statActive = document.getElementById('statActive');
+      
+      const total = players.length;
+      const avgXP = total > 0 ? Math.round(players.reduce((sum, p) => sum + p.xp, 0) / total) : 0;
+      const activeCount = players.filter(p => p.safety.status !== 'at_risk').length;
+      const activePercent = total > 0 ? Math.round((activeCount / total) * 100) : 0;
+      
+      statPlayers.textContent = total;
+      statXP.textContent = avgXP;
+      statActive.textContent = activePercent + '%';
+    }
 
-async function deletePlayerEverywhere(name){
-  if(!syncUrl) throw new Error("syncUrl not configured");
-  
-  // Use GET request with query parameter - no CORS issues
-  const url = syncUrl + "?deletePlayer=" + encodeURIComponent(name);
-  const res = await fetch(url);
-  const j = await res.json();
-  
-  if(!j || j.ok !== true) {
-    throw new Error((j && j.error) || "Delete failed");
-  }
-  
-  return j;
-}
-
-    // Render
-    function render(){
-      const store=loadStore();
-      const names=Object.keys(store.players);
-
-      let avgXP=0, avgStreak=0, avgProg=0, rows=[];
-      const w=+filterWeek.value, d=+filterDay.value; const q=(search.value||"").toLowerCase();
-
-      names.forEach(n=>{
-        const p=store.players[n];
-        if(!p) return;
-        if(q && !n.toLowerCase().includes(q)) return;
-        const week=p.week||w, day=p.day||d;
-        const total=(p.total && p.day===day && p.week===week) ? p.total : totalBoxesForDay(day);
-        const done=Math.min(p.completed||0,total);
-        rows.push({name:n, xp:p.xp||0, streak:p.streak||0, week, day, done, total});
-      });
-
-      kPlayers.textContent = rows.length;
-      if(rows.length){
-        avgXP = Math.round(rows.reduce((a,r)=>a+r.xp,0)/rows.length);
-        avgStreak = Math.round(rows.reduce((a,r)=>a+r.streak,0)/rows.length);
-        const progVals = rows.map(r=> r.total>0 ? (r.done/r.total) : 0);
-        avgProg = clampPct(100 * progVals.reduce((a,b)=>a+b,0)/rows.length);
+    function renderPlayerCards(players) {
+      const grid = document.getElementById('playersGrid');
+      grid.innerHTML = '';
+      
+      if (players.length === 0) {
+        grid.innerHTML = '<p style="color: var(--text-dim); text-align: center; padding: 40px;">No players found</p>';
+        return;
       }
-      kAvgXP.textContent=avgXP; kAvgStreak.textContent=avgStreak; kAvgProg.style.width=(avgProg||0)+"%";
-
-      tbody.innerHTML="";
-      rows.sort((a,b)=>a.name.localeCompare(b.name)).forEach(r=>{
-        const tr=document.createElement('tr');
-        const pct = r.total>0 ? clampPct(100*r.done/r.total) : 0;
-        const badges = (r.xp>=600)?["Gold"] : (r.xp>=300)?["Silver"] : (r.xp>=100)?["Bronze"] : [];
-        tr.innerHTML = `
-          <td>${esc(r.name)}</td>
-          <td>${r.week}</td>
-          <td>${["","Day 1","Day 2","Day 3"][r.day]}</td>
-          <td>${r.done} / ${r.total||0}
-              <div class="progress" style="margin-top:4px"><div style="width:${pct}%"></div></div></td>
-          <td>${r.xp}</td>
-          <td>${r.streak}</td>
-          <td>${badges.join(", ")||"-"}</td>
-          <td>
-            <button class="btn" data-view="${esc(r.name)}">View</button>
-            <button class="btn" data-del="${esc(r.name)}">Delete</button>
-          </td>`;
-        tbody.appendChild(tr);
+      
+      players.sort((a, b) => a.name.localeCompare(b.name));
+      
+      players.forEach(player => {
+        const card = document.createElement('div');
+        card.className = 'player-card ' + player.safety.status.replace('_', '-');
+        
+        const statusEmoji = {
+          'on_track': '🔥',
+          'check_in': '⚠️',
+          'at_risk': '❌'
+        };
+        
+        const statusText = {
+          'on_track': 'ON TRACK',
+          'check_in': 'CHECK IN',
+          'at_risk': 'AT RISK'
+        };
+        
+        card.innerHTML = `
+          <button class="delete-btn" data-player="${escapeHtml(player.name)}">×</button>
+          <div class="player-name">${escapeHtml(player.name)}</div>
+          <div class="player-meta">Week ${player.currentWeek}, Day ${player.currentDay}</div>
+          <div class="player-meta">${player.xp} XP</div>
+          <div class="player-meta">${player.totalWorkouts} Workouts</div>
+          <div class="player-status ${player.safety.status.replace('_', '-')}">
+            ${statusEmoji[player.safety.status]} ${statusText[player.safety.status]}
+          </div>
+        `;
+        
+        card.addEventListener('click', (e) => {
+          if (!e.target.classList.contains('delete-btn')) {
+            openPlayerModal(player);
+          }
+        });
+        
+        grid.appendChild(card);
+      });
+      
+      // Attach delete handlers
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const playerName = btn.getAttribute('data-player');
+          if (confirm(`Permanently delete ${playerName} from Sheets and dashboard?`)) {
+            const success = await deletePlayer(playerName);
+            if (success) {
+              render();
+            } else {
+              alert("Delete failed. Check console for details.");
+            }
+          }
+        });
       });
     }
 
-    function setDetail(name){
-      const p=loadStore().players[name];
-      if(!p){ detail.textContent="No data."; return; }
-      const total = p.total || totalBoxesForDay(p.day||1);
-      const done  = Math.min(p.completed||0,total);
-      detail.innerHTML = `
-        <div class="row"><strong>${esc(name)}</strong><span class="badge">Week ${p.week||1}</span><span class="badge">${["","Day 1","Day 2","Day 3"][p.day||1]}</span></div>
-        <div class="row small" style="margin-top:6px">
-          <span>XP: <b>${p.xp||0}</b></span>
-          <span>Streak: <b>${p.streak||0}</b></span>
-          <span>Completed: <b>${done}</b> / ${total}</span>
+    // ========== MODAL ==========
+    const modal = document.getElementById('playerModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalClose = document.getElementById('modalClose');
+
+    function openPlayerModal(player) {
+      currentPlayerData = player;
+      modalTitle.textContent = `${player.name.toUpperCase()} — Week ${player.currentWeek}, Day ${player.currentDay}`;
+      
+      renderOverviewTab(player);
+      renderHistoryTab(player);
+      renderSafetyTab(player);
+      
+      modal.classList.add('show');
+      
+      // Stop polling while modal is open
+      if (pollTimer) {
+        clearInterval(pollTimer);
+        pollTimer = null;
+      }
+    }
+
+    function closePlayerModal() {
+      modal.classList.remove('show');
+      currentPlayerData = null;
+      
+      // Resume polling
+      startPolling();
+    }
+
+    modalClose.onclick = closePlayerModal;
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closePlayerModal();
+      }
+    });
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tabName = btn.getAttribute('data-tab');
+        
+        // Update buttons
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        // Update panes
+        document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+        document.getElementById('tab-' + tabName).classList.add('active');
+      });
+    });
+
+    function renderOverviewTab(player) {
+      const tab = document.getElementById('tab-overview');
+      const workout = player.currentWorkout;
+      
+      tab.innerHTML = `
+        <div class="overview-stats">
+          <div class="overview-stat">
+            <div class="overview-stat-label">Total XP</div>
+            <div class="overview-stat-value">${player.xp}</div>
+          </div>
+          <div class="overview-stat">
+            <div class="overview-stat-label">Workouts</div>
+            <div class="overview-stat-value">${player.totalWorkouts}</div>
+          </div>
+          <div class="overview-stat">
+            <div class="overview-stat-label">Progress</div>
+            <div class="overview-stat-value">${workout.percentage}%</div>
+          </div>
         </div>
-        <div class="progress" style="margin-top:6px"><div style="width:${clampPct(total?100*done/total:0)}%"></div></div>
+        
+        <h3 style="font-size: 20px; color: var(--accent); margin-bottom: 16px;">Current Workout</h3>
+        
+        <div class="section-breakdown">
+          <div class="section-item">
+            <div class="section-header">
+              <div class="section-name">Warm-Up</div>
+              <div class="section-percentage">${workout.sections.warmup.done}/${workout.sections.warmup.total}</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${workout.sections.warmup.percentage}%"></div>
+            </div>
+          </div>
+          
+          <div class="section-item">
+            <div class="section-header">
+              <div class="section-name">Core</div>
+              <div class="section-percentage">${workout.sections.core.done}/${workout.sections.core.total}</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${workout.sections.core.percentage}%"></div>
+            </div>
+          </div>
+          
+          <div class="section-item">
+            <div class="section-header">
+              <div class="section-name">Jump</div>
+              <div class="section-percentage">${workout.sections.jump.done}/${workout.sections.jump.total}</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${workout.sections.jump.percentage}%"></div>
+            </div>
+          </div>
+          
+          <div class="section-item">
+            <div class="section-header">
+              <div class="section-name">Strength</div>
+              <div class="section-percentage">${workout.sections.strength.done}/${workout.sections.strength.total}</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${workout.sections.strength.percentage}%"></div>
+            </div>
+          </div>
+        </div>
+        
+        ${workout.notes ? `
+          <div class="player-notes">
+            <div class="notes-label">Player Notes</div>
+            <div class="notes-content">${escapeHtml(workout.notes)}</div>
+          </div>
+        ` : ''}
       `;
     }
 
-    // Events
-    document.addEventListener('click', async e=>{
-      const v=e.target.getAttribute && e.target.getAttribute('data-view');
-      const del=e.target.getAttribute && e.target.getAttribute('data-del');
+    function renderHistoryTab(player) {
+      const tab = document.getElementById('tab-history');
+      const history = player.history || [];
       
-      if(v){ 
-        setDetail(v); 
+      if (history.length === 0) {
+        tab.innerHTML = '<p style="color: var(--text-dim); text-align: center; padding: 40px;">No workout history</p>';
+        return;
       }
       
-      if (del) {
-        if (confirm(`Permanently delete ${del} from Sheets and this dashboard?`)) {
-          try {
-            await deletePlayerEverywhere(del);
-            const store = loadStore();
-            delete store.players[del];
-            saveStore(store);
-            render();
-            detail.textContent = `Player "${del}" deleted from Sheets and dashboard.`;
-          } catch (err) {
-            alert("Delete failed: " + (err && err.message ? err.message : err));
-          }
-        }
-      }
-    });
-    
-    filterWeek.onchange=render; filterDay.onchange=render; search.oninput=render;
-    refreshBtn.onclick=async()=>{ await loadConfig(); await loadPlayersFromSheet(); render(); };
-
-    // Mock and import/export
-    function mockPlayer(name){
-      const week=1+Math.floor(Math.random()*WEEKS);
-      const day=1+Math.floor(Math.random()*3);
-      const total=totalBoxesForDay(day);
-      const done=Math.floor(total*(0.4+Math.random()*0.6));
-      return {name,week,day,total,completed:done,xp:Math.floor(50+Math.random()*400),streak:Math.floor(Math.random()*10)};
+      let html = '<div class="history-list">';
+      
+      history.forEach(workout => {
+        html += `
+          <div class="history-item">
+            <div class="history-header">
+              <div class="history-title">Week ${workout.week}, Day ${workout.day}</div>
+              <div class="history-date">${workout.date}</div>
+            </div>
+            <div class="history-completion">${workout.completed}/${workout.total} exercises (${workout.percentage}%)</div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${workout.percentage}%"></div>
+            </div>
+            ${workout.notes ? `<div style="margin-top: 8px; color: var(--text-dim); font-size: 13px;">${escapeHtml(workout.notes)}</div>` : ''}
+          </div>
+        `;
+      });
+      
+      html += '</div>';
+      tab.innerHTML = html;
     }
-    addMock.onclick=()=>{
-      const store=loadStore();
-      ["Sam","AJ","Trey","Miles","Jordan","Evan","Noah","Zach"].forEach(n=>{ store.players[n]=mockPlayer(n); });
-      saveStore(store); render();
-    };
-    exportJSON.onclick=()=>{
-      const blob=new Blob([JSON.stringify(loadStore(),null,2)],{type:"application/json"});
-      const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download="osc_team.json"; a.click();
-    };
-    document.querySelector('label.btn').onclick=()=>importFile.click();
-    importFile.onchange=(e)=>{
-      const f=e.target.files && e.target.files[0]; if(!f) return;
-      const r=new FileReader();
-      r.onload=()=>{ try{
-          const incoming=JSON.parse(r.result);
-          if(!incoming || !incoming.players) throw new Error("Invalid file");
-          saveStore(incoming); render(); detail.textContent="Imported team JSON.";
-        }catch(err){ alert("Import failed: "+err.message); }
-      };
-      r.readAsText(f);
+
+    function renderSafetyTab(player) {
+      const tab = document.getElementById('tab-safety');
+      const safety = player.safety;
+      
+      const warmupStatus = safety.warmupCompletionRate >= 80 ? 'good' : safety.warmupCompletionRate >= 60 ? 'warning' : 'danger';
+      const coreStatus = safety.coreCompletionRate >= 80 ? 'good' : safety.coreCompletionRate >= 60 ? 'warning' : 'danger';
+      const activityStatus = safety.daysSinceLastWorkout <= 3 ? 'good' : safety.daysSinceLastWorkout <= 7 ? 'warning' : 'danger';
+      const frequencyStatus = safety.workoutFrequency === '3x/week' || safety.workoutFrequency === 'Good' ? 'good' : safety.workoutFrequency === 'Low' ? 'warning' : 'danger';
+      
+      const statusIcon = { 'good': '✅', 'warning': '⚠️', 'danger': '❌' };
+      
+      tab.innerHTML = `
+        <div class="safety-indicators">
+          <div class="safety-indicator ${warmupStatus}">
+            <div class="safety-icon">${statusIcon[warmupStatus]}</div>
+            <div class="safety-label">Warm-Up Completion</div>
+            <div class="safety-value">${safety.warmupCompletionRate}%</div>
+          </div>
+          
+          <div class="safety-indicator ${coreStatus}">
+            <div class="safety-icon">${statusIcon[coreStatus]}</div>
+            <div class="safety-label">Core Work Completion</div>
+            <div class="safety-value">${safety.coreCompletionRate}%</div>
+          </div>
+          
+          <div class="safety-indicator ${activityStatus}">
+            <div class="safety-icon">${statusIcon[activityStatus]}</div>
+            <div class="safety-label">Last Activity</div>
+            <div class="safety-value">${safety.daysSinceLastWorkout} days ago</div>
+          </div>
+          
+          <div class="safety-indicator ${frequencyStatus}">
+            <div class="safety-icon">${statusIcon[frequencyStatus]}</div>
+            <div class="safety-label">Workout Frequency</div>
+            <div class="safety-value">${safety.workoutFrequency}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ========== EXPORT ==========
+    document.getElementById('exportBtn').onclick = async () => {
+      const data = await fetchPlayers();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `sky_core_team_${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
     };
 
-    // Init
-    async function init(){
-      console.log("🚀 Initializing coach dashboard...");
-      const store=loadStore();
-      if(!store.players) saveStore({players:{}});
-      filterWeek.value = filterWeek.value || "1";
-      filterDay.value = filterDay.value || "1";
+    // ========== REFRESH ==========
+    document.getElementById('refreshBtn').onclick = render;
+
+    // ========== POLLING ==========
+    function startPolling() {
+      if (pollTimer) clearInterval(pollTimer);
+      pollTimer = setInterval(render, POLL_INTERVAL);
+    }
+
+    // ========== HELPERS ==========
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ========== INIT ==========
+    async function init() {
       await loadConfig();
-      await loadPlayersFromSheet();
-      render();
+      await render();
+      startPolling();
     }
 
+    // Start
     requireLogin();
   </script>
 </body>
