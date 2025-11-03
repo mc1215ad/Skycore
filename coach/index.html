@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#0c204a">
-  <title>Sky Core Coach Dashboard v2.0</title>
+  <title>Sky Core Coach Dashboard v2.0 FIXED</title>
   <style>
     :root {
       --bg: #0c204a;
@@ -50,7 +50,6 @@
       z-index: 1;
     }
 
-    /* ===== HEADER ===== */
     header {
       text-align: center;
       padding: 32px 0 24px;
@@ -97,7 +96,6 @@
       box-shadow: 0 4px 12px rgba(0, 217, 255, 0.2);
     }
 
-    /* ===== LOGIN CARD ===== */
     #loginCard {
       max-width: 400px;
       margin: 40px auto;
@@ -129,7 +127,6 @@
       font-size: 14px;
     }
 
-    /* ===== TEAM OVERVIEW ===== */
     .team-overview {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -167,7 +164,6 @@
       text-shadow: 0 0 20px rgba(0, 217, 255, 0.4);
     }
 
-    /* ===== PLAYER CARDS GRID ===== */
     .players-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -285,7 +281,6 @@
       box-shadow: 0 4px 12px rgba(255, 77, 109, 0.5);
     }
 
-    /* ===== MODAL ===== */
     .modal {
       position: fixed;
       inset: 0;
@@ -430,7 +425,6 @@
       display: block;
     }
 
-    /* ===== OVERVIEW TAB ===== */
     .overview-stats {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -531,7 +525,6 @@
       line-height: 1.6;
     }
 
-    /* ===== HISTORY TAB ===== */
     .history-list {
       display: flex;
       flex-direction: column;
@@ -569,7 +562,6 @@
       margin-bottom: 8px;
     }
 
-    /* ===== SAFETY TAB ===== */
     .safety-indicators {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -630,7 +622,6 @@
       color: var(--red);
     }
 
-    /* ===== PLACEHOLDER TABS ===== */
     .placeholder {
       text-align: center;
       padding: 60px 20px;
@@ -657,7 +648,6 @@
       display: none;
     }
 
-    /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
       .team-overview {
         grid-template-columns: repeat(2, 1fr);
@@ -688,7 +678,6 @@
 </head>
 <body>
   <div class="wrap">
-    <!-- LOGIN CARD -->
     <div id="loginCard">
       <h1 style="margin-bottom: 16px;">COACH LOGIN</h1>
       <input id="pw" type="password" placeholder="Enter Password">
@@ -699,12 +688,11 @@
       </p>
     </div>
 
-    <!-- MAIN APP (hidden until login) -->
     <div id="app" class="hidden">
       <header>
         <h1>OPERATION SKY CORE</h1>
         <p style="color: var(--text-dim); font-size: 14px; margin-top: 8px;">
-          Coach Dashboard v2.0
+          Coach Dashboard v2.0 FIXED
         </p>
         <div class="header-actions">
           <button id="refreshBtn">🔄 Refresh</button>
@@ -712,7 +700,6 @@
         </div>
       </header>
 
-      <!-- TEAM OVERVIEW -->
       <div class="team-overview">
         <div class="stat-box">
           <div class="stat-label">Total Players</div>
@@ -728,12 +715,10 @@
         </div>
       </div>
 
-      <!-- PLAYER CARDS GRID -->
       <div class="players-grid" id="playersGrid"></div>
     </div>
   </div>
 
-  <!-- PLAYER MODAL -->
   <div class="modal" id="playerModal">
     <div class="modal-box">
       <div class="modal-header">
@@ -750,16 +735,9 @@
       </div>
       
       <div class="modal-content">
-        <!-- Overview Tab -->
         <div class="tab-pane active" id="tab-overview"></div>
-        
-        <!-- History Tab -->
         <div class="tab-pane" id="tab-history"></div>
-        
-        <!-- Safety Tab -->
         <div class="tab-pane" id="tab-safety"></div>
-        
-        <!-- Notes Tab -->
         <div class="tab-pane" id="tab-notes">
           <div class="placeholder">
             <div class="placeholder-icon">📝</div>
@@ -767,8 +745,6 @@
             <div class="placeholder-text">Coming in Phase 2 — Real-time coach notes</div>
           </div>
         </div>
-        
-        <!-- Messages Tab -->
         <div class="tab-pane" id="tab-messages">
           <div class="placeholder">
             <div class="placeholder-icon">💬</div>
@@ -781,16 +757,14 @@
   </div>
 
   <script>
-    // ========== CONFIG ==========
     const PASS = "Lynx2025!";
     const SESSION_KEY = "osc_coach_authed_v2";
-    const POLL_INTERVAL = 30000; // 30 seconds
+    const POLL_INTERVAL = 30000;
     
     let coachUrl = "";
     let pollTimer = null;
     let currentPlayerData = null;
 
-    // ========== LOAD CONFIG ==========
     async function loadConfig() {
       try {
         let res = await fetch("./config.json?t=" + Date.now(), { cache: "no-store" });
@@ -806,7 +780,6 @@
       }
     }
 
-    // ========== LOGIN ==========
     const loginCard = document.getElementById('loginCard');
     const appEl = document.getElementById('app');
     const pw = document.getElementById('pw');
@@ -843,7 +816,6 @@
       if (e.key === "Enter") loginBtn.click();
     });
 
-    // ========== DATA FETCHING ==========
     async function fetchPlayers() {
       if (!coachUrl) return { ok: false, players: {} };
       
@@ -859,7 +831,6 @@
       }
     }
 
-    // ========== DELETE PLAYER ==========
     async function deletePlayer(playerName) {
       if (!coachUrl) return false;
       
@@ -874,7 +845,6 @@
       }
     }
 
-    // ========== RENDER ==========
     async function render() {
       const data = await fetchPlayers();
       
@@ -884,11 +854,7 @@
       }
       
       const players = Object.values(data.players);
-      
-      // Update team stats
       updateTeamStats(players);
-      
-      // Render player cards
       renderPlayerCards(players);
     }
 
@@ -898,8 +864,12 @@
       const statActive = document.getElementById('statActive');
       
       const total = players.length;
-      const avgXP = total > 0 ? Math.round(players.reduce((sum, p) => sum + p.xp, 0) / total) : 0;
-      const activeCount = players.filter(p => p.safety.status !== 'at_risk').length;
+      const avgXP = total > 0 ? Math.round(players.reduce((sum, p) => sum + (p.xp || 0), 0) / total) : 0;
+      
+      // FIXED: Defensive check for missing safety data
+      const activeCount = players.filter(p => {
+        return p.safety && p.safety.status && p.safety.status !== 'at_risk';
+      }).length;
       const activePercent = total > 0 ? Math.round((activeCount / total) * 100) : 0;
       
       statPlayers.textContent = total;
@@ -919,8 +889,12 @@
       players.sort((a, b) => a.name.localeCompare(b.name));
       
       players.forEach(player => {
+        // FIXED: Defensive checks for missing data
+        const safety = player.safety || { status: 'check_in' };
+        const safetyStatus = safety.status || 'check_in';
+        
         const card = document.createElement('div');
-        card.className = 'player-card ' + player.safety.status.replace('_', '-');
+        card.className = 'player-card ' + safetyStatus.replace('_', '-');
         
         const statusEmoji = {
           'on_track': '🔥',
@@ -937,11 +911,11 @@
         card.innerHTML = `
           <button class="delete-btn" data-player="${escapeHtml(player.name)}">×</button>
           <div class="player-name">${escapeHtml(player.name)}</div>
-          <div class="player-meta">Week ${player.currentWeek}, Day ${player.currentDay}</div>
-          <div class="player-meta">${player.xp} XP</div>
-          <div class="player-meta">${player.totalWorkouts} Workouts</div>
-          <div class="player-status ${player.safety.status.replace('_', '-')}">
-            ${statusEmoji[player.safety.status]} ${statusText[player.safety.status]}
+          <div class="player-meta">Week ${player.currentWeek || 1}, Day ${player.currentDay || 1}</div>
+          <div class="player-meta">${player.xp || 0} XP</div>
+          <div class="player-meta">${player.totalWorkouts || 0} Workouts</div>
+          <div class="player-status ${safetyStatus.replace('_', '-')}">
+            ${statusEmoji[safetyStatus] || '⚠️'} ${statusText[safetyStatus] || 'CHECK IN'}
           </div>
         `;
         
@@ -954,7 +928,6 @@
         grid.appendChild(card);
       });
       
-      // Attach delete handlers
       document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', async (e) => {
           e.stopPropagation();
@@ -971,7 +944,6 @@
       });
     }
 
-    // ========== MODAL ==========
     const modal = document.getElementById('playerModal');
     const modalTitle = document.getElementById('modalTitle');
     const modalClose = document.getElementById('modalClose');
@@ -986,7 +958,6 @@
       
       modal.classList.add('show');
       
-      // Stop polling while modal is open
       if (pollTimer) {
         clearInterval(pollTimer);
         pollTimer = null;
@@ -996,8 +967,6 @@
     function closePlayerModal() {
       modal.classList.remove('show');
       currentPlayerData = null;
-      
-      // Resume polling
       startPolling();
     }
 
@@ -1008,16 +977,13 @@
       }
     });
 
-    // Tab switching
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const tabName = btn.getAttribute('data-tab');
         
-        // Update buttons
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         
-        // Update panes
         document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
         document.getElementById('tab-' + tabName).classList.add('active');
       });
@@ -1025,17 +991,26 @@
 
     function renderOverviewTab(player) {
       const tab = document.getElementById('tab-overview');
-      const workout = player.currentWorkout;
+      const workout = player.currentWorkout || {
+        percentage: 0,
+        sections: {
+          warmup: { done: 0, total: 0, percentage: 0 },
+          core: { done: 0, total: 0, percentage: 0 },
+          jump: { done: 0, total: 0, percentage: 0 },
+          strength: { done: 0, total: 0, percentage: 0 }
+        },
+        notes: ""
+      };
       
       tab.innerHTML = `
         <div class="overview-stats">
           <div class="overview-stat">
             <div class="overview-stat-label">Total XP</div>
-            <div class="overview-stat-value">${player.xp}</div>
+            <div class="overview-stat-value">${player.xp || 0}</div>
           </div>
           <div class="overview-stat">
             <div class="overview-stat-label">Workouts</div>
-            <div class="overview-stat-value">${player.totalWorkouts}</div>
+            <div class="overview-stat-value">${player.totalWorkouts || 0}</div>
           </div>
           <div class="overview-stat">
             <div class="overview-stat-label">Progress</div>
@@ -1129,7 +1104,14 @@
 
     function renderSafetyTab(player) {
       const tab = document.getElementById('tab-safety');
-      const safety = player.safety;
+      
+      // FIXED: Defensive check for missing safety data
+      const safety = player.safety || {
+        warmupCompletionRate: 0,
+        coreCompletionRate: 0,
+        daysSinceLastWorkout: 0,
+        workoutFrequency: 'Unknown'
+      };
       
       const warmupStatus = safety.warmupCompletionRate >= 80 ? 'good' : safety.warmupCompletionRate >= 60 ? 'warning' : 'danger';
       const coreStatus = safety.coreCompletionRate >= 80 ? 'good' : safety.coreCompletionRate >= 60 ? 'warning' : 'danger';
@@ -1143,31 +1125,30 @@
           <div class="safety-indicator ${warmupStatus}">
             <div class="safety-icon">${statusIcon[warmupStatus]}</div>
             <div class="safety-label">Warm-Up Completion</div>
-            <div class="safety-value">${safety.warmupCompletionRate}%</div>
+            <div class="safety-value">${safety.warmupCompletionRate || 0}%</div>
           </div>
           
           <div class="safety-indicator ${coreStatus}">
             <div class="safety-icon">${statusIcon[coreStatus]}</div>
             <div class="safety-label">Core Work Completion</div>
-            <div class="safety-value">${safety.coreCompletionRate}%</div>
+            <div class="safety-value">${safety.coreCompletionRate || 0}%</div>
           </div>
           
           <div class="safety-indicator ${activityStatus}">
             <div class="safety-icon">${statusIcon[activityStatus]}</div>
             <div class="safety-label">Last Activity</div>
-            <div class="safety-value">${safety.daysSinceLastWorkout} days ago</div>
+            <div class="safety-value">${safety.daysSinceLastWorkout || 0} days ago</div>
           </div>
           
           <div class="safety-indicator ${frequencyStatus}">
             <div class="safety-icon">${statusIcon[frequencyStatus]}</div>
             <div class="safety-label">Workout Frequency</div>
-            <div class="safety-value">${safety.workoutFrequency}</div>
+            <div class="safety-value">${safety.workoutFrequency || 'Unknown'}</div>
           </div>
         </div>
       `;
     }
 
-    // ========== EXPORT ==========
     document.getElementById('exportBtn').onclick = async () => {
       const data = await fetchPlayers();
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
@@ -1177,30 +1158,25 @@
       a.click();
     };
 
-    // ========== REFRESH ==========
     document.getElementById('refreshBtn').onclick = render;
 
-    // ========== POLLING ==========
     function startPolling() {
       if (pollTimer) clearInterval(pollTimer);
       pollTimer = setInterval(render, POLL_INTERVAL);
     }
 
-    // ========== HELPERS ==========
     function escapeHtml(text) {
       const div = document.createElement('div');
       div.textContent = text;
       return div.innerHTML;
     }
 
-    // ========== INIT ==========
     async function init() {
       await loadConfig();
       await render();
       startPolling();
     }
 
-    // Start
     requireLogin();
   </script>
 </body>
