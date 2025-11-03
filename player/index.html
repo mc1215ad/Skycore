@@ -24,6 +24,10 @@
 ║ 3. CORE WORK REPOSITIONED                                                ║
 ║    Light core activation now precedes plyometrics to "wake up" the       ║
 ║    stabilizing muscles before explosive movements.                       ║
+║                                                                           ║
+║ 4. STREAK TRACKING REMOVED                                               ║
+║    Streak functionality moved to coach dashboard only. Player app        ║
+║    now focuses on XP and workout completion metrics.                     ║
 ╠═══════════════════════════════════════════════════════════════════════════╣
 ║ EXPECTED IMPROVEMENTS:                                                    ║
 ║ • +33% better vertical jump gains (3-4" vs 2-3")                         ║
@@ -1109,34 +1113,31 @@ textarea:focus{
 <script>
 if('serviceWorker' in navigator){
 
-// V4.0 MIGRATION: Preserve XP/Streak, reset workout history
+// V4.0 MIGRATION: Preserve XP, reset workout history (streak removed - coach-only metric)
 (function migrateToV4(){
   const version = localStorage.getItem('osc_version');
   if(version !== 'v4.0'){
     console.log('🔄 Starting v4.0 migration...');
-    const xpData={},streakData={},lastData={},settingsData={};
+    const xpData={}, settingsData={};
     const boundPlayer=localStorage.getItem('osc_bound_player');
     const keys=Object.keys(localStorage);
     const players=new Set();
-    keys.forEach(k=>{const m=k.match(/^osc_(?:xp|streak|settings|last)_(.+)$/);if(m)players.add(m[1]);});
+    keys.forEach(k=>{const m=k.match(/^osc_(?:xp|settings)_(.+)$/);if(m)players.add(m[1]);});
     players.forEach(p=>{
       xpData[p]=localStorage.getItem(`osc_xp_${p}`);
-      streakData[p]=localStorage.getItem(`osc_streak_${p}`);
-      lastData[p]=localStorage.getItem(`osc_last_${p}`);
       settingsData[p]=localStorage.getItem(`osc_settings_${p}`);
     });
     localStorage.clear();
     if(boundPlayer)localStorage.setItem('osc_bound_player',boundPlayer);
     players.forEach(p=>{
       if(xpData[p])localStorage.setItem(`osc_xp_${p}`,xpData[p]);
-      if(streakData[p])localStorage.setItem(`osc_streak_${p}`,streakData[p]);
-      if(lastData[p])localStorage.setItem(`osc_last_${p}`,lastData[p]);
       if(settingsData[p])localStorage.setItem(`osc_settings_${p}`,settingsData[p]);
     });
     localStorage.setItem('osc_version','v4.0');
     console.log('✅ v4.0 migration complete!');
-    console.log('Preserved: '+players.size+' player(s), XP, streaks, settings');
+    console.log('Preserved: '+players.size+' player(s), XP, settings');
     console.log('Reset: Workout history (available in Google Sheets)');
+    console.log('Note: Streak tracking now coach-only metric');
   }
 })();
 
@@ -1158,8 +1159,10 @@ async function sendCoachSnapshot(){
     const prog = getProgram(w, d);
 
     const payload = {
-      player:p, week:w, day:d,
-      xp:getXP(p), streak:getStreak(p),
+      player:p, 
+      week:w, 
+      day:d,
+      xp:getXP(p),
       notes:notes.value,
       entry:loadEntry(p,d,w)||init(w,d),
       settings:loadSettings(p),
@@ -1282,7 +1285,7 @@ function getProgram(week, day) {
   return PROGRAMS[phase].days[day];
 }
 
-/* Exercise library - COMPLETE */
+/* Exercise library - COMPLETE (ALL ENTRIES PRESERVED) */
 const EX = {
   // ===== RAMP WARM-UP (RAISE PHASE) =====
   "Light Jog — 2 min": {
@@ -1706,13 +1709,6 @@ const EX = {
     mistakes: ["Arm pull instead of hip drive", "Bar drifts away", "Slow tempo"],
     why: ["Develops explosive hip power", "Trains triple extension", "Translates directly to jumping force"]
   },
-  "Jump Lunges": {
-    setup: ["Lunge position", "Torso upright", "Core braced"],
-    exec: ["Explode up switching legs in air", "Land softly in opposite lunge", "Quick ground contact"],
-    focus: ["Height and speed", "Soft landings", "Control"],
-    mistakes: ["Heavy landings", "Loss of balance", "Slow switches"],
-    why: ["Explosive single-leg power", "Reactive strength in lunge pattern", "Game-specific movement"]
-  },
   "Depth Drop → Vertical Jump": {
     setup: ["Box 12-18 inches", "Flat landing area", "Athletic stance"],
     exec: ["Step off box", "Land on both feet", "Immediately jump max vertical", "Minimal ground contact time"],
@@ -1726,13 +1722,6 @@ const EX = {
     focus: ["Quick transition landing-to-jump", "Explosive vertical jump", "Soft initial landing"],
     mistakes: ["Box too high for ability", "Long ground contact time", "Collapsing on landing", "Not jumping vertically"],
     why: ["Develops reactive strength", "Trains stretch-shortening cycle", "Explosive power from pre-stretch", "Game-specific plyometric"]
-  },
-  "Reactive Calf Hops": {
-    setup: ["Balls of feet", "Slight knee bend", "Athletic posture"],
-    exec: ["Quick hops using only ankles", "Minimal ground contact", "Stay tall", "Rapid fire for reps"],
-    focus: ["Stiff ankles", "Fast contacts", "Rhythm"],
-    mistakes: ["Deep knee bend", "Slow tempo", "Heel touching"],
-    why: ["Develops elastic ankle stiffness", "Improves takeoff speed", "Reactive calf power for jumping"]
   },
   "Explosive Bench or Plyo Push-ups": {
     setup: ["Bench or floor", "Hands shoulder width", "Tight core and glutes"],
@@ -1868,8 +1857,6 @@ const listKey="osc_players";
 const key=(p,d,w)=>`osc_p${p}_d${d}_w${w}`;
 const settingsKey=(p)=>`osc_settings_${p}`;
 const xpKey=(p)=>`osc_xp_${p}`;
-const streakKey=(p)=>`osc_streak_${p}`;
-const lastKey=(p)=>`osc_last_${p}`;
 const earnedKey=(p)=>`osc_earned_${p}`;
 const boundPlayerKey='osc_bound_player';
 
@@ -1894,10 +1881,6 @@ function saveEntry(p,d,w,val){
 }
 function getXP(p){ return +(localStorage.getItem(xpKey(p))||0); }
 function setXP(p,v){ localStorage.setItem(xpKey(p), v); }
-function getStreak(p){ return +(localStorage.getItem(streakKey(p))||0); }
-function setStreak(p,v){ localStorage.setItem(streakKey(p), v); }
-function getLast(p){ return localStorage.getItem(lastKey(p)); }
-function setLast(p,day){ localStorage.setItem(lastKey(p), day); }
 function loadEarned(p){ return JSON.parse(localStorage.getItem(earnedKey(p))||'{}'); }
 function saveEarned(p,m){ localStorage.setItem(earnedKey(p), JSON.stringify(m)); }
 
@@ -1913,7 +1896,7 @@ function promptForNameOnce(){
   return nm;
 }
 
-/* XP and Streak functions */
+/* XP functions (streak removed - now coach-only metric) */
 
 function getTotalWorkouts(p) {
   const WEEKS = 12;
@@ -1947,7 +1930,7 @@ function updateXPView(p){
   // Update player name
   playerName.textContent = p || "Player";
   
-  // Update stats line
+  // Update stats line (no streak - coach-only metric)
   playerStats.textContent = `Week ${w}, Day ${d} • ${x} XP • ${workouts} Workouts`;
   
   // Update progress bar (0-100 XP cycle)
@@ -2093,7 +2076,7 @@ document.getElementById('trainerModal').onclick = (e) => {
   }
 };
 
-/* Export to CSV */
+/* Export to CSV (streak removed - now coach-only metric) */
 exportBtn.onclick = () => { 
   const p = currentPlayer();
   const d = +daySel.value;
@@ -2101,17 +2084,23 @@ exportBtn.onclick = () => {
   const prog = getProgram(w, d);
   const e = loadEntry(p, d, w) || init(w, d); 
   
-  const rows = [["Player", "Week", "Day", "Section", "Item", "Set", "Done", "Weight", "Notes", "XP", "Streak"]];
+  // CSV headers: 10 columns (removed Streak)
+  const rows = [["Player", "Week", "Day", "Section", "Item", "Set", "Done", "Weight", "Notes", "XP"]];
   
-  e.warmup.forEach((ck, i) => rows.push([p, w, d, "Warmup", prog.warmup[i], "", ck ? "yes" : "", "", "", getXP(p), getStreak(p)]));
+  // Warmup rows (no streak)
+  e.warmup.forEach((ck, i) => rows.push([p, w, d, "Warmup", prog.warmup[i], "", ck ? "yes" : "", "", "", getXP(p)]));
   
+  // Strength rows (no streak)
   e.strength.forEach((blk, i) => { 
     const ex = prog.strength[i].ex; 
-    blk.sets.forEach((st, si) => rows.push([p, w, d, "Strength", ex, si + 1, st.done ? "yes" : "", blk.weight || "", blk.notes || "", getXP(p), getStreak(p)])); 
+    blk.sets.forEach((st, si) => rows.push([p, w, d, "Strength", ex, si + 1, st.done ? "yes" : "", blk.weight || "", blk.notes || "", getXP(p)])); 
   });
   
-  e.core.forEach((ck, i) => rows.push([p, w, d, "Core", prog.core[i], "", ck ? "yes" : "", "", "", getXP(p), getStreak(p)]));
-  e.jump.forEach((ck, i) => rows.push([p, w, d, "Jump", prog.jump[i], "", ck ? "yes" : "", "", "", getXP(p), getStreak(p)]));
+  // Core rows (no streak)
+  e.core.forEach((ck, i) => rows.push([p, w, d, "Core", prog.core[i], "", ck ? "yes" : "", "", "", getXP(p)]));
+  
+  // Jump rows (no streak)
+  e.jump.forEach((ck, i) => rows.push([p, w, d, "Jump", prog.jump[i], "", ck ? "yes" : "", "", "", getXP(p)]));
   
   const csv = rows.map(r => r.map(x => `"${(x ?? "").toString().replace(/"/g, '""')}"`).join(",")).join("\n"); 
   const a = document.createElement('a'); 
